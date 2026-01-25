@@ -1,0 +1,187 @@
+"use client";
+
+import { motion } from "framer-motion";
+import { GlassCard } from "@/components/ui/GlassCard";
+import { BarChart3, Users, Clock, TrendingUp, Wallet, CheckCircle2 } from "lucide-react";
+
+const stats = [
+  {
+    category: "Scale & Reach",
+    items: [
+      { label: "Daily Active Users", value: "88.9M", detail: "27% YoY Increase", icon: Users, highlight: true },
+      { label: "Quarterly Engagement", value: "20.7B hrs", detail: "29% YoY Increase", icon: Clock },
+      { label: "Monthly Active Users", value: "380M+", detail: "Estimated MAU", icon: TrendingUp },
+    ]
+  },
+  {
+    category: "Demographics",
+    items: [
+      { label: "Aged 13+", value: "58%", detail: "Majority of user base", icon: CheckCircle2, highlight: true },
+      { label: "Fastest Growing", value: "17-24", detail: "Platform 'Aging Up'", icon: TrendingUp },
+      { label: "Gender Split", value: "Near Even", detail: "43% Female / 57% Male", icon: Users },
+    ]
+  },
+  {
+    category: "The Digital Economy",
+    items: [
+      { label: "Quarterly Bookings", value: "$1.13B", detail: "34% YoY Growth", icon: Wallet, highlight: true },
+      { label: "Paid to Creators", value: "$800M+", detail: "Trailing 12 Months", icon: BarChart3 },
+      { label: "Daily Avatar Updates", value: "1.6B", detail: "Digital Identity Focus", icon: Users },
+    ]
+  }
+];
+
+const brands = [
+  "Fashion & Apparel", "Beauty & Cosmetics", "Automotive", "Entertainment", "Food & Beverage", "Retail & Tech"
+];
+
+export function MarketStats() {
+  return (
+    <section id="stats" className="py-32 relative bg-void overflow-hidden">
+      <div className="container mx-auto px-6 max-w-6xl">
+        <div className="flex flex-col items-center text-center mb-24">
+          <motion.span
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="text-white/60 font-bold uppercase tracking-[0.4em] text-[10px] block mb-6"
+          >
+            Market Validation
+          </motion.span>
+          <motion.h2
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="text-5xl md:text-7xl font-bold tracking-tight mb-8"
+          >
+            The Metaverse is Here <br /> 
+            <span className="text-white/40 font-light italic">& It's Profitable.</span>
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ delay: 0.2 }}
+            className="text-white/70 text-lg max-w-2xl leading-relaxed"
+          >
+            Roblox is no longer just a game; it's a massive, aging-up social utility 
+            with an economy that rivals small nations.
+          </motion.p>
+        </div>
+
+        <div className="space-y-32">
+          {stats.map((cat, categoryIdx) => (
+            <div key={cat.category} className="space-y-12">
+              <div className="flex items-center gap-8">
+                <h3 className="text-white/40 font-bold uppercase tracking-[0.3em] text-xs whitespace-nowrap">
+                  {cat.category}
+                </h3>
+                <div className="h-[1px] w-full bg-white/10" />
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {cat.items.map((item, i) => (
+                  <GlassCard 
+                    key={item.label} 
+                    className={item.highlight ? "border-neon-blue/20" : ""}
+                  >
+                    <div className="space-y-6">
+                      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${item.highlight ? "bg-neon-blue/10 text-neon-blue" : "bg-white/5 text-white/60"}`}>
+                        <item.icon className="w-5 h-5" />
+                      </div>
+                      <div>
+                        <p className="text-white/60 text-[10px] font-bold uppercase tracking-widest mb-2">{item.label}</p>
+                        <h4 className="text-4xl font-bold text-white mb-2">{item.value}</h4>
+                        <p className="text-white/40 text-xs font-medium">{item.detail}</p>
+                      </div>
+                    </div>
+                  </GlassCard>
+                ))}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Brand Ecosystem */}
+        <div className="mt-48 pt-24 border-t border-white/5">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
+            <div>
+              <span className="text-white/60 font-bold uppercase tracking-[0.4em] text-[10px] block mb-10">
+                Brand Integration
+              </span>
+              <h2 className="text-4xl md:text-5xl font-bold tracking-tight mb-8">
+                450+ Major Global <br /> <span className="text-white/40 italic font-light">Brands Activated.</span>
+              </h2>
+              <p className="text-white/70 text-lg leading-relaxed mb-12">
+                From high-fashion to automotive, the world's leading brands are 
+                leveraging persistent worlds and pop-up integrations to capture attention.
+              </p>
+              <div className="flex flex-wrap gap-4">
+                {brands.map((brand) => (
+                  <span key={brand} className="px-4 py-2 border border-white/10 rounded-full text-[10px] font-bold uppercase tracking-widest text-white/60">
+                    {brand}
+                  </span>
+                ))}
+              </div>
+            </div>
+            
+            <GlassCard className="p-12 relative overflow-hidden">
+              <div className="relative z-10 space-y-8">
+                <div className="flex items-center justify-between">
+                  <span className="text-white/40 font-bold uppercase tracking-widest text-[10px]">The Attention Economy</span>
+                  <BarChart3 className="text-neon-blue w-5 h-5" />
+                </div>
+                <h3 className="text-2xl font-bold text-white">Capture Active Engagement</h3>
+                <p className="text-white/70 italic leading-relaxed">
+                  "For every 1 hour a user spends on YouTube, they spend nearly 2 hours on Roblox."
+                </p>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-white/60">
+                      <span>Roblox</span>
+                      <span>130 min/day</span>
+                    </div>
+                    <div className="h-1 w-full bg-white/5 overflow-hidden">
+                      <motion.div 
+                        className="h-full bg-white" 
+                        initial={{ width: 0 }} 
+                        whileInView={{ width: "100%" }} 
+                        transition={{ duration: 1, ease: "easeOut" }}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-white/40">
+                      <span>TikTok</span>
+                      <span>112 min/day</span>
+                    </div>
+                    <div className="h-1 w-full bg-white/5 overflow-hidden">
+                      <motion.div 
+                        className="h-full bg-white/40" 
+                        initial={{ width: 0 }} 
+                        whileInView={{ width: "86%" }} 
+                        transition={{ duration: 1, ease: "easeOut" }}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="flex justify-between text-[10px] font-bold uppercase tracking-widest text-white/40">
+                      <span>YouTube</span>
+                      <span>70 min/day</span>
+                    </div>
+                    <div className="h-1 w-full bg-white/5 overflow-hidden">
+                      <motion.div 
+                        className="h-full bg-white/20" 
+                        initial={{ width: 0 }} 
+                        whileInView={{ width: "54%" }} 
+                        transition={{ duration: 1, ease: "easeOut" }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </GlassCard>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}

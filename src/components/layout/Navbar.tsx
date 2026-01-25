@@ -35,7 +35,7 @@ export function Navbar() {
       </Link>
 
       <nav className="hidden md:flex items-center gap-16">
-        {["Work", "Services", "About"].map((item) => (
+        {["Work", "Stats", "Services", "About"].map((item) => (
           <Link
             key={item}
             href={`#${item.toLowerCase()}`}
