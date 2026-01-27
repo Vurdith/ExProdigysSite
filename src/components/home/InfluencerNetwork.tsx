@@ -2,130 +2,126 @@
 
 import { motion } from "framer-motion";
 import { GlassCard } from "@/components/ui/GlassCard";
-import { Globe2, Users2, Youtube } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 
 const influencers = [
   {
     name: "LankyBox",
-    region: "USA / Global",
+    region: "GLOBAL",
     subs: "38.5M",
-    platform: "YouTube",
-    focus: "Variety Gaming",
+    focus: "Variety / Gaming",
+    metric: "1.2B+ Views/mo",
   },
   {
     name: "Flamingo",
     region: "USA",
     subs: "13.1M",
-    platform: "YouTube",
     focus: "Comedy / Chaos",
+    metric: "400M+ Views/mo",
   },
   {
     name: "ItsFunneh",
-    region: "Canada",
+    region: "CANADA",
     subs: "10.5M",
-    platform: "YouTube",
     focus: "Roleplay / Group",
+    metric: "250M+ Views/mo",
   },
   {
     name: "KreekCraft",
     region: "USA",
     subs: "10.2M",
-    platform: "YouTube",
-    focus: "News / Live Events",
-  },
-  {
-    name: "Thinknoodles",
-    region: "USA",
-    subs: "10.1M",
-    platform: "YouTube",
-    focus: "Simulators / Tips",
+    focus: "Live Events",
+    metric: "180M+ Views/mo",
   },
 ];
 
 export function InfluencerNetwork() {
   return (
-    <section id="influencers" className="py-32 relative bg-void overflow-hidden">
-      <div className="container mx-auto px-6 max-w-6xl">
-        <div className="flex flex-col md:flex-row md:items-end justify-between gap-12 mb-24">
-          <div className="max-w-2xl">
-            <motion.span
-              initial={{ opacity: 0, x: -20 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              className="text-white/60 font-bold uppercase tracking-[0.4em] text-[10px] block mb-10"
-            >
-              Amplification
-            </motion.span>
-            <motion.h2
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              className="text-5xl md:text-7xl font-bold tracking-tight leading-[1.1]"
-            >
-              The Influencer <br /> <span className="text-white/40 font-light italic">Network.</span>
-            </motion.h2>
-          </div>
-          <motion.p
-            initial={{ opacity: 0 }}
-            whileInView={{ opacity: 1 }}
-            className="text-white/70 text-lg max-w-sm leading-relaxed"
+    <section id="influencers" className="py-48 relative bg-void overflow-hidden">
+      {/* Structural Backdrop */}
+      <div className="absolute top-0 left-0 w-full h-full pointer-events-none opacity-[0.02] overflow-hidden">
+        <span className="absolute top-10 left-10 text-[20vw] font-black leading-none select-none">AMPLIFY</span>
+      </div>
+
+      <div className="container mx-auto px-6 max-w-6xl relative z-10">
+        {/* Editorial Header */}
+        <div className="flex flex-col gap-8 mb-32 border-l-2 border-white/10 pl-12">
+          <motion.span
+            initial={{ opacity: 0, x: -20 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            className="text-white/40 font-bold uppercase tracking-[0.6em] text-[10px]"
           >
-            Leveraging high-reach creators to drive massive traffic and 
-            viral engagement for every brand activation.
-          </motion.p>
+            DISTRIBUTION NODES
+          </motion.span>
+          <motion.h2
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            className="text-6xl md:text-8xl font-bold tracking-tighter leading-[0.85] text-white max-w-3xl"
+          >
+            THE REACH <br />
+            <span className="text-white/10 italic font-light">IS ABSOLUTE.</span>
+          </motion.h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {/* Industrial Talent Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-1 px-4 md:px-0 bg-white/5 border border-white/5">
           {influencers.map((influencer, i) => (
-            <GlassCard 
+            <div 
               key={influencer.name}
-              className="group border-white/5 hover:border-neon-blue/20"
+              className="group relative bg-void p-12 md:p-16 border border-white/5 hover:bg-white/[0.02] transition-colors duration-700"
             >
-              <div className="relative z-10 space-y-8">
+              {/* Background Name Overlay */}
+              <div className="absolute top-4 right-8 text-white/[0.02] text-8xl font-black select-none group-hover:text-white/[0.05] transition-colors duration-700">
+                {influencer.name.split('')[0]}
+              </div>
+
+              <div className="relative z-10 space-y-12">
                 <div className="flex justify-between items-start">
-                  <div className="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center group-hover:bg-white group-hover:text-black transition-all duration-500">
-                    <Youtube className="w-6 h-6" />
+                  <div className="space-y-2">
+                    <p className="text-white/40 font-mono text-[10px] tracking-widest uppercase">
+                      Node_{i.toString().padStart(2, '0')} // {influencer.region}
+                    </p>
+                    <h3 className="text-4xl font-bold text-white tracking-tight group-hover:translate-x-2 transition-transform duration-500">
+                      {influencer.name}
+                    </h3>
                   </div>
-                  <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-white/40">
-                    <Globe2 className="w-3 h-3 text-neon-blue" />
-                    {influencer.region}
+                  <ArrowUpRight className="w-5 h-5 text-white/20 group-hover:text-white transition-colors duration-500" />
+                </div>
+
+                <div className="grid grid-cols-2 gap-12">
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Reach</p>
+                    <p className="text-2xl font-black text-white tracking-tighter">{influencer.subs}</p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Velocity</p>
+                    <p className="text-sm font-medium text-white/60 leading-tight">{influencer.metric}</p>
                   </div>
                 </div>
 
-                <div>
-                  <h3 className="text-3xl font-bold text-white mb-2 tracking-tight">
-                    {influencer.name}
-                  </h3>
-                  <p className="text-white/40 text-xs font-bold uppercase tracking-[0.2em]">
+                <div className="pt-8 flex items-center justify-between">
+                  <span className="px-3 py-1 border border-white/10 text-[9px] font-bold uppercase tracking-[0.3em] text-white/40 group-hover:border-white/40 group-hover:text-white transition-all duration-500">
                     {influencer.focus}
-                  </p>
-                </div>
-
-                <div className="pt-8 border-t border-white/5 flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <Users2 className="w-4 h-4 text-white/20" />
-                    <span className="text-2xl font-black text-white tracking-tighter">
-                      {influencer.subs}
-                    </span>
-                  </div>
-                  <span className="text-[9px] font-bold uppercase tracking-[0.3em] text-white/20">
-                    Subscribers
                   </span>
                 </div>
               </div>
-            </GlassCard>
+            </div>
           ))}
+        </div>
 
-          {/* Aggregate Stat Card */}
-          <GlassCard className="bg-neon-blue/5 border-neon-blue/20 flex flex-col justify-center text-center p-12">
-            <h4 className="text-white/40 font-bold uppercase tracking-[0.4em] text-[10px] mb-6">
-              Total Managed Reach
-            </h4>
-            <span className="text-6xl md:text-7xl font-black text-white tracking-tighter mb-4">
-              100M+
-            </span>
-            <p className="text-white/60 text-sm font-medium tracking-wide">
-              Global audience across <br /> primary gaming territories.
+        {/* Global Summary Footer */}
+        <div className="mt-24 flex flex-col md:flex-row justify-between items-center gap-12">
+          <div className="flex items-center gap-8">
+            <span className="text-7xl md:text-9xl font-black tracking-tighter text-white">100M+</span>
+            <div className="h-16 w-[1px] bg-white/10 hidden md:block" />
+            <p className="text-white/40 text-sm font-medium tracking-wide max-w-[180px] uppercase leading-relaxed">
+              Global managed reach across primary gaming territories.
             </p>
-          </GlassCard>
+          </div>
+          
+          <button className="px-12 py-5 border border-white/10 text-white/60 text-[10px] font-black uppercase tracking-[0.4em] hover:bg-white hover:text-black hover:border-white transition-all duration-500">
+            Audit Distribution
+          </button>
         </div>
       </div>
     </section>
