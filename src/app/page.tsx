@@ -1,6 +1,7 @@
 import { ExitIntentPopup } from "@/components/conversion/ExitIntentPopup";
 import { FeaturedGames } from "@/components/home/FeaturedGames";
 import { Hero } from "@/components/home/Hero";
+import { InfluencerNetwork } from "@/components/home/InfluencerNetwork";
 import { MarketStats } from "@/components/home/MarketStats";
 import { Services } from "@/components/home/Services";
 import { SocialProof } from "@/components/home/SocialProof";
@@ -15,6 +16,7 @@ export default function Home() {
       <SocialProof />
       <Services />
       <MarketStats />
+      <InfluencerNetwork />
       <FeaturedGames />
       <ExitIntentPopup />
       <ScheduleMeetingFAB />
