@@ -5,7 +5,7 @@ import { GlassCard } from "@/components/ui/GlassCard";
 
 export function SocialProof() {
   return (
-    <section className="relative z-20 py-24 bg-void">
+    <section id="about" className="relative z-20 py-24 bg-void">
       <div className="container mx-auto px-6 max-w-6xl">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-24 items-center">
           {/* Humanizing the Brand - Founder's Note */}
