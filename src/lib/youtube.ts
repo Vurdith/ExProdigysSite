@@ -38,26 +38,49 @@ export async function getChannelData(urlOrHandle: string): Promise<YouTubeChanne
     // Description
     const description = metadata.description || "";
     
-    // Avatar
-    let avatarUrl = metadata.avatar?.thumbnails?.[0]?.url || "";
+    // Avatar Extraction
+    let avatarUrl = "";
+    
+    // Try multiple possible paths for the avatar (YouTube frequently changes these)
+    const possibleAvatarPaths = [
+      metadata.avatar?.thumbnails,
+      header.avatar?.thumbnails,
+      header.profilePic?.thumbnails,
+      header.image?.decoratedAvatarViewModel?.avatar?.avatar?.image?.thumbnails,
+      json.header?.pageHeaderRenderer?.content?.pageHeaderViewModel?.image?.decoratedAvatarViewModel?.avatar?.avatar?.image?.thumbnails
+    ];
+
+    for (const thumbnails of possibleAvatarPaths) {
+      if (thumbnails && thumbnails.length > 0) {
+        // Get the highest resolution (usually the last one)
+        avatarUrl = thumbnails[thumbnails.length - 1].url;
+        break;
+      }
+    }
+
     if (avatarUrl.startsWith("//")) avatarUrl = "https:" + avatarUrl;
 
     // Subscriber Count
     let subscriberCount = "N/A";
     
     // Support for multiple YouTube UI versions
-    if (header.subscriberCountText?.simpleText) {
-      subscriberCount = header.subscriberCountText.simpleText.split(" ")[0];
-    } else if (header.metadata?.contentMetadataViewModel?.metadataRows) {
-        // Newer YouTube UI structure
-        const rows = header.metadata.contentMetadataViewModel.metadataRows;
-        for (const row of rows) {
-            const text = row.metadataParts?.[0]?.text?.content || "";
-            if (text.includes("subscribers")) {
-                subscriberCount = text.split(" ")[0];
-                break;
-            }
+    const subCountText = 
+      header.subscriberCountText?.simpleText || 
+      header.metadata?.contentMetadataViewModel?.metadataRows?.[0]?.metadataParts?.[0]?.text?.content ||
+      "";
+
+    if (subCountText) {
+      subscriberCount = subCountText.split(" ")[0];
+    } else {
+      // Fallback: check all metadata rows for "subscribers"
+      const rows = header.metadata?.contentMetadataViewModel?.metadataRows || [];
+      for (const row of rows) {
+        const text = row.metadataParts?.[0]?.text?.content || "";
+        if (text.toLowerCase().includes("subscribers")) {
+          subscriberCount = text.split(" ")[0];
+          break;
         }
+      }
     }
 
     return {
