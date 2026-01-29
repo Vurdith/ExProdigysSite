@@ -1,9 +1,31 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 import { motion } from "framer-motion";
 import { GlassCard } from "@/components/ui/GlassCard";
 
 export function SocialProof() {
+  const [quote, setQuote] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      const { data, error } = await supabase
+        .from("site_content")
+        .select("value")
+        .eq("key", "founder_quote")
+        .single();
+
+      if (data) setQuote(data.value);
+      setLoading(false);
+    };
+
+    fetchContent();
+  }, []);
+
+  const defaultQuote = "We don't just build games; we architect digital legacies. Every project we take on is a partnership built on transparency and radical results.";
+
   return (
     <section id="about" className="relative z-20 py-24 bg-void">
       <div className="container mx-auto px-6 max-w-6xl">
@@ -26,7 +48,7 @@ export function SocialProof() {
                 </div>
               </div>
               <p className="text-xl italic text-white/90 leading-relaxed mb-8">
-                "We don't just build games; we architect digital legacies. Every project we take on is a partnership built on transparency and radical results."
+                "{quote || (loading ? "..." : defaultQuote)}"
               </p>
               <div className="flex items-center gap-2">
                 {[1,2,3,4,5].map(i => (
@@ -48,7 +70,7 @@ export function SocialProof() {
             >
               Why Partner With Us
             </motion.span>
-            <h2 className="text-4xl md:text-5xl font-bold tracking-tight">
+            <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-white">
               Removing the <br /> <span className="text-white/40 italic font-light">Fear of Failure.</span>
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">

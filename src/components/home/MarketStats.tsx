@@ -1,41 +1,60 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 import { motion } from "framer-motion";
 import { GlassCard } from "@/components/ui/GlassCard";
 import { BarChart3, Users, Clock, TrendingUp, Wallet, CheckCircle2 } from "lucide-react";
 
-const stats = [
-  {
-    category: "Scale & Reach",
-    items: [
-      { label: "Daily Active Users", value: "88.9M", detail: "27% YoY Increase", icon: Users, highlight: true },
-      { label: "Quarterly Engagement", value: "20.7B hrs", detail: "29% YoY Increase", icon: Clock },
-      { label: "Monthly Active Users", value: "380M+", detail: "Estimated MAU", icon: TrendingUp },
-    ]
-  },
-  {
-    category: "Demographics",
-    items: [
-      { label: "Aged 13+", value: "58%", detail: "Majority of user base", icon: CheckCircle2, highlight: true },
-      { label: "Fastest Growing", value: "17-24", detail: "Platform 'Aging Up'", icon: TrendingUp },
-      { label: "Gender Split", value: "Near Even", detail: "43% Female / 57% Male", icon: Users },
-    ]
-  },
-  {
-    category: "The Digital Economy",
-    items: [
-      { label: "Quarterly Bookings", value: "$1.13B", detail: "34% YoY Growth", icon: Wallet, highlight: true },
-      { label: "Paid to Creators", value: "$800M+", detail: "Trailing 12 Months", icon: BarChart3 },
-      { label: "Daily Avatar Updates", value: "1.6B", detail: "Digital Identity Focus", icon: Users },
-    ]
-  }
-];
+interface MarketStat {
+  id: string;
+  category: string;
+  label: string;
+  value: string;
+  detail: string;
+  icon_name: string;
+  is_highlighted: boolean;
+  order_index: number;
+}
 
-const brands = [
-  "Fashion & Apparel", "Beauty & Cosmetics", "Automotive", "Entertainment", "Food & Beverage", "Retail & Tech"
-];
+const iconMap: Record<string, any> = {
+  BarChart3,
+  Users,
+  Clock,
+  TrendingUp,
+  Wallet,
+  CheckCircle2,
+};
 
 export function MarketStats() {
+  const [stats, setStats] = useState<MarketStat[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      const { data, error } = await supabase
+        .from("market_stats")
+        .select("*")
+        .order("order_index", { ascending: true });
+
+      if (data) setStats(data);
+      setLoading(false);
+    };
+
+    fetchStats();
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="py-32 bg-void flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-white/10 border-t-white rounded-full animate-spin" />
+      </section>
+    );
+  }
+
+  const categories = ["Scale & Reach", "Demographics", "The Digital Economy"];
+  const brands = ["Fashion & Apparel", "Beauty & Cosmetics", "Automotive", "Entertainment", "Food & Beverage", "Retail & Tech"];
+
   return (
     <section id="stats" className="py-32 relative bg-void overflow-hidden">
       <div className="container mx-auto px-6 max-w-6xl">
@@ -68,33 +87,36 @@ export function MarketStats() {
         </div>
 
         <div className="space-y-32">
-          {stats.map((cat, categoryIdx) => (
-            <div key={cat.category} className="space-y-12">
+          {categories.map((category) => (
+            <div key={category} className="space-y-12">
               <div className="flex items-center gap-8">
                 <h3 className="text-white/40 font-bold uppercase tracking-[0.3em] text-xs whitespace-nowrap">
-                  {cat.category}
+                  {category}
                 </h3>
                 <div className="h-[1px] w-full bg-white/10" />
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {cat.items.map((item, i) => (
-                  <GlassCard 
-                    key={item.label} 
-                    className={item.highlight ? "border-neon-blue/20" : ""}
-                  >
-                    <div className="space-y-6">
-                      <div className={`w-10 h-10 rounded-full flex items-center justify-center ${item.highlight ? "bg-neon-blue/10 text-neon-blue" : "bg-white/5 text-white/60"}`}>
-                        <item.icon className="w-5 h-5" />
+                {stats.filter(s => s.category === category).map((item) => {
+                  const Icon = iconMap[item.icon_name] || BarChart3;
+                  return (
+                    <GlassCard 
+                      key={item.id} 
+                      className={item.is_highlighted ? "border-neon-blue/20" : ""}
+                    >
+                      <div className="space-y-6">
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center ${item.is_highlighted ? "bg-neon-blue/10 text-neon-blue" : "bg-white/5 text-white/60"}`}>
+                          <Icon className="w-5 h-5" />
+                        </div>
+                        <div>
+                          <p className="text-white/60 text-[10px] font-bold uppercase tracking-widest mb-2">{item.label}</p>
+                          <h4 className="text-4xl font-bold text-white mb-2">{item.value}</h4>
+                          <p className="text-white/40 text-xs font-medium">{item.detail}</p>
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-white/60 text-[10px] font-bold uppercase tracking-widest mb-2">{item.label}</p>
-                        <h4 className="text-4xl font-bold text-white mb-2">{item.value}</h4>
-                        <p className="text-white/40 text-xs font-medium">{item.detail}</p>
-                      </div>
-                    </div>
-                  </GlassCard>
-                ))}
+                    </GlassCard>
+                  );
+                })}
               </div>
             </div>
           ))}

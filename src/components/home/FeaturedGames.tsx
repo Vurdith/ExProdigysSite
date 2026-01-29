@@ -1,39 +1,48 @@
 "use client";
 
+import { useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 import { motion } from "framer-motion";
 import Image from "next/image";
 
-const games = [
-  {
-    title: "GrowROT",
-    description: "Plant your magical seeds and grow a brainrot!",
-    image: "/images/hero-1.png",
-    stats: "1M+ Peak CCU",
-  },
-  {
-    title: "Anime Simulator",
-    description: "Welcome to Anime Simulator, a fighting and training game.",
-    image: "/images/hero-2.png",
-    stats: "500K+ Peak CCU",
-  },
-  {
-    title: "Anime Chefs",
-    description: "Step into the kitchen where cooking meets chaos.",
-    image: "/images/hero-3.png",
-    stats: "250K+ Peak CCU",
-  },
-  {
-    title: "Go Hard Games",
-    description: "Find the best Roblox games to play with friends.",
-    image: "/images/hero-1.png",
-    stats: "Platform Leader",
-  },
-];
-
-// Duplicate for seamless loop
-const allGames = [...games, ...games];
+interface PortfolioGame {
+  id: string;
+  title: string;
+  description: string;
+  image_url: string;
+  stats: string;
+  order_index: number;
+}
 
 export function FeaturedGames() {
+  const [games, setGames] = useState<PortfolioGame[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchGames = async () => {
+      const { data, error } = await supabase
+        .from("portfolio_games")
+        .select("*")
+        .order("order_index", { ascending: true });
+
+      if (data) setGames(data);
+      setLoading(false);
+    };
+
+    fetchGames();
+  }, []);
+
+  if (loading) {
+    return (
+      <section className="py-32 bg-void flex items-center justify-center">
+        <div className="w-8 h-8 border-2 border-white/10 border-t-white rounded-full animate-spin" />
+      </section>
+    );
+  }
+
+  // Duplicate for seamless loop if we have enough games
+  const allGames = games.length > 0 ? [...games, ...games] : [];
+
   return (
     <section id="work" className="relative py-32 bg-void overflow-hidden">
       <div className="container mx-auto px-6 max-w-6xl mb-24">
@@ -63,12 +72,12 @@ export function FeaturedGames() {
           style={{ width: "fit-content" }}
         >
           {allGames.map((game, i) => (
-            <div key={i} className="relative flex-shrink-0">
+            <div key={`${game.id}-${i}`} className="relative flex-shrink-0">
               <div className="group relative h-[55vh] w-[400px] md:w-[500px] rounded-none border border-white/5 bg-white/[0.02] overflow-hidden transition-all duration-700 hover:border-white/20">
                 {/* Background Image */}
                 <div className="absolute inset-0 z-0">
                   <Image
-                    src={game.image}
+                    src={game.image_url}
                     alt={game.title}
                     fill
                     className="object-cover opacity-20 grayscale transition-all duration-700 group-hover:scale-105 group-hover:opacity-40 group-hover:grayscale-0"
@@ -90,7 +99,7 @@ export function FeaturedGames() {
                   <div className="w-12 h-[1px] bg-white/40 transition-all duration-500 group-hover:w-full" />
                 </div>
 
-                {/* Index - Adjust based on original list length */}
+                {/* Index */}
                 <div className="absolute top-12 right-12 text-white/10 font-mono text-sm group-hover:text-white/40 transition-colors">
                   0{(i % games.length) + 1}
                 </div>
@@ -100,7 +109,7 @@ export function FeaturedGames() {
         </motion.div>
       </div>
 
-      {/* Gradient Fades for the edges */}
+      {/* Gradient Fades */}
       <div className="pointer-events-none absolute inset-y-0 left-0 w-32 bg-gradient-to-r from-void to-transparent z-10" />
       <div className="pointer-events-none absolute inset-y-0 right-0 w-32 bg-gradient-to-l from-void to-transparent z-10" />
     </section>
