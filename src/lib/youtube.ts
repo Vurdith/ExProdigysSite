@@ -28,36 +28,36 @@ export async function getChannelData(urlOrHandle: string): Promise<YouTubeChanne
 
     const json = JSON.parse(dataMatch[1]);
     
+    // DEBUG: Log top level keys to find the data structure
+    if (process.env.NODE_ENV === "development") {
+      console.log("YT JSON KEYS:", Object.keys(json));
+      if (json.header) console.log("YT HEADER KEYS:", Object.keys(json.header));
+      if (json.metadata) console.log("YT METADATA KEYS:", Object.keys(json.metadata));
+    }
+    
     // Extract metadata using deep path navigation
     const metadata = json.metadata?.channelMetadataRenderer || {};
+    // Extract avatar from metadata or header
+    let avatarUrl = metadata.avatar?.thumbnails?.[0]?.url || "";
+
+    // SUPPORT FOR NEWEST YT UI (Page Header View Model)
+    const pageHeader = json.header?.pageHeaderRenderer?.content?.pageHeaderViewModel;
+    if (pageHeader?.image?.decoratedAvatarViewModel?.avatar?.avatar?.image?.thumbnails) {
+        const pfpThumbnails = pageHeader.image.decoratedAvatarViewModel.avatar.avatar.image.thumbnails;
+        avatarUrl = pfpThumbnails[pfpThumbnails.length - 1].url;
+    } else if (json.header?.c4TabbedHeaderRenderer?.avatar?.thumbnails) {
+        const pfpThumbnails = json.header.c4TabbedHeaderRenderer.avatar.thumbnails;
+        avatarUrl = pfpThumbnails[pfpThumbnails.length - 1].url;
+    }
+
     const header = json.header?.c4TabbedHeaderRenderer || json.header?.pageHeaderRenderer?.content?.pageHeaderViewModel || {};
     
     // Title
-    const title = metadata.title || "";
+    const title = metadata.title || pageHeader?.title?.dynamicTextViewModel?.text?.content || "";
     
     // Description
     const description = metadata.description || "";
     
-    // Avatar Extraction
-    let avatarUrl = "";
-    
-    // Try multiple possible paths for the avatar (YouTube frequently changes these)
-    const possibleAvatarPaths = [
-      metadata.avatar?.thumbnails,
-      header.avatar?.thumbnails,
-      header.profilePic?.thumbnails,
-      header.image?.decoratedAvatarViewModel?.avatar?.avatar?.image?.thumbnails,
-      json.header?.pageHeaderRenderer?.content?.pageHeaderViewModel?.image?.decoratedAvatarViewModel?.avatar?.avatar?.image?.thumbnails
-    ];
-
-    for (const thumbnails of possibleAvatarPaths) {
-      if (thumbnails && thumbnails.length > 0) {
-        // Get the highest resolution (usually the last one)
-        avatarUrl = thumbnails[thumbnails.length - 1].url;
-        break;
-      }
-    }
-
     if (avatarUrl.startsWith("//")) avatarUrl = "https:" + avatarUrl;
 
     // Subscriber Count
@@ -71,16 +71,16 @@ export async function getChannelData(urlOrHandle: string): Promise<YouTubeChanne
 
     if (subCountText) {
       subscriberCount = subCountText.split(" ")[0];
-    } else {
-      // Fallback: check all metadata rows for "subscribers"
-      const rows = header.metadata?.contentMetadataViewModel?.metadataRows || [];
-      for (const row of rows) {
-        const text = row.metadataParts?.[0]?.text?.content || "";
-        if (text.toLowerCase().includes("subscribers")) {
-          subscriberCount = text.split(" ")[0];
-          break;
+    } else if (pageHeader?.metadata?.contentMetadataViewModel?.metadataRows) {
+        // Nested check for newer UI
+        const rows = pageHeader.metadata.contentMetadataViewModel.metadataRows;
+        for (const row of rows) {
+            const text = row.metadataParts?.[0]?.text?.content || "";
+            if (text.toLowerCase().includes("subscribers")) {
+                subscriberCount = text.split(" ")[0];
+                break;
+            }
         }
-      }
     }
 
     return {
