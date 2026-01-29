@@ -48,18 +48,32 @@ export default function StatsAdmin() {
   };
 
   const handleSave = async () => {
-    if (isEditing === "new") {
-      const { error } = await supabase.from("market_stats").insert([formData]);
-      if (!error) fetchStats();
-    } else {
-      const { error } = await supabase
-        .from("market_stats")
-        .update(formData)
-        .eq("id", isEditing);
-      if (!error) fetchStats();
+    if (!formData.label || !formData.value) {
+      alert("Please fill in the required fields: Label and Value.");
+      return;
     }
-    setIsEditing(null);
-    setFormData({});
+
+    try {
+      const { id, created_at, ...cleanData } = formData as any;
+      
+      if (isEditing === "new") {
+        const { error } = await supabase.from("market_stats").insert([cleanData]);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from("market_stats")
+          .update(cleanData)
+          .eq("id", isEditing);
+        if (error) throw error;
+      }
+      
+      await fetchStats();
+      setIsEditing(null);
+      setFormData({});
+    } catch (error: any) {
+      console.error("Save error:", error);
+      alert(`Failed to save: ${error.message || "Unknown error"}`);
+    }
   };
 
   const handleDelete = async (id: string) => {

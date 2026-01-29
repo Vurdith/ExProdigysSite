@@ -47,18 +47,32 @@ export default function PortfolioAdmin() {
   };
 
   const handleSave = async () => {
-    if (isEditing === "new") {
-      const { error } = await supabase.from("portfolio_games").insert([formData]);
-      if (!error) fetchGames();
-    } else {
-      const { error } = await supabase
-        .from("portfolio_games")
-        .update(formData)
-        .eq("id", isEditing);
-      if (!error) fetchGames();
+    if (!formData.title || !formData.description || !formData.stats) {
+      alert("Please fill in the required fields: Title, Description, and Stats.");
+      return;
     }
-    setIsEditing(null);
-    setFormData({});
+
+    try {
+      const { id, created_at, ...cleanData } = formData as any;
+      
+      if (isEditing === "new") {
+        const { error } = await supabase.from("portfolio_games").insert([cleanData]);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from("portfolio_games")
+          .update(cleanData)
+          .eq("id", isEditing);
+        if (error) throw error;
+      }
+      
+      await fetchGames();
+      setIsEditing(null);
+      setFormData({});
+    } catch (error: any) {
+      console.error("Save error:", error);
+      alert(`Failed to save: ${error.message || "Unknown error"}`);
+    }
   };
 
   const handleDelete = async (id: string) => {

@@ -49,18 +49,32 @@ export default function InfluencersAdmin() {
   };
 
   const handleSave = async () => {
-    if (isEditing === "new") {
-      const { error } = await supabase.from("influencers").insert([formData]);
-      if (!error) fetchInfluencers();
-    } else {
-      const { error } = await supabase
-        .from("influencers")
-        .update(formData)
-        .eq("id", isEditing);
-      if (!error) fetchInfluencers();
+    if (!formData.name || !formData.subs || !formData.metric) {
+      alert("Please fill in the required fields: Name, Subscribers, and Metric.");
+      return;
     }
-    setIsEditing(null);
-    setFormData({});
+
+    try {
+      const { id, created_at, ...cleanData } = formData as any;
+      
+      if (isEditing === "new") {
+        const { error } = await supabase.from("influencers").insert([cleanData]);
+        if (error) throw error;
+      } else {
+        const { error } = await supabase
+          .from("influencers")
+          .update(cleanData)
+          .eq("id", isEditing);
+        if (error) throw error;
+      }
+      
+      await fetchInfluencers();
+      setIsEditing(null);
+      setFormData({});
+    } catch (error: any) {
+      console.error("Save error:", error);
+      alert(`Failed to save: ${error.message || "Unknown error"}`);
+    }
   };
 
   const handleDelete = async (id: string) => {
