@@ -57,13 +57,28 @@ export default function InfluencersAdmin() {
   };
 
   const handleSave = async (e?: React.MouseEvent) => {
+    // DIAGNOSTIC CHECK
+    const { data: { session } } = await supabase.auth.getSession();
+    console.log("CURRENT SESSION:", session);
+    window.alert("Auth Check: " + (session ? `Logged in as ${session.user.email}` : "NOT LOGGED IN"));
+
+    if (!session) {
+      window.alert("ERROR: You must be logged in to save changes. Please go to the login page.");
+      // setSaving(false);
+      return;
+    }
+
+    // FORCE ALERT TO SEE IF TRIGGERED
+    window.alert("Handle save triggered!");
+    console.log("HANDLE SAVE TRIGGERED", formData);
+
     if (e) {
-      if (typeof e.preventDefault === 'function') e.preventDefault();
-      if (typeof e.stopPropagation === 'function') e.stopPropagation();
+      e.preventDefault();
+      e.stopPropagation();
     }
     
     if (!formData.name || !formData.subs || !formData.metric) {
-      alert("Please fill in Name, Subscribers, and Metric.");
+      window.alert("Validation failed: missing fields");
       return;
     }
 
@@ -76,6 +91,7 @@ export default function InfluencersAdmin() {
         payload.order_index = parseInt(String(payload.order_index)) || 0;
       }
 
+      window.alert("Attempting Supabase save...");
       let result;
       if (isEditing === "new") {
         result = await supabase.from("influencers").insert([payload]).select();
@@ -87,15 +103,19 @@ export default function InfluencersAdmin() {
           .select();
       }
 
-      if (result.error) throw new Error(result.error.message);
+      if (result.error) {
+        window.alert("Supabase Error: " + result.error.message);
+        throw new Error(result.error.message);
+      }
       
+      window.alert("Save successful, fetching updated list...");
       await fetchInfluencers();
       setIsEditing(null);
       setFormData({});
-      alert("Saved successfully!");
+      window.alert("Saved successfully!");
     } catch (error: any) {
       console.error("Save error:", error);
-      alert(`Error: ${error.message}`);
+      window.alert("Catch error: " + error.message);
     } finally {
       setSaving(false);
     }
@@ -173,7 +193,7 @@ export default function InfluencersAdmin() {
 
       <div className="grid grid-cols-1 gap-6">
         {isEditing && (
-          <GlassCard className="p-10 border-neon-blue/20 bg-neon-blue/5">
+          <div className="p-10 border border-white/10 bg-[#0A0A0A] rounded-3xl shadow-2xl relative z-[1000]">
             <div className="flex items-center gap-4 mb-10">
               <div className="w-12 h-12 bg-neon-blue/10 flex items-center justify-center text-neon-blue">
                 {isEditing === "new" ? <Plus className="w-6 h-6" /> : <Edit2 className="w-5 h-5" />}
@@ -202,8 +222,7 @@ export default function InfluencersAdmin() {
                     type="button"
                     onClick={fetchYouTubeData}
                     disabled={fetchingYT}
-                    className="relative z-[100] bg-white/10 hover:bg-white/20 text-white px-6 py-3 text-[10px] font-bold uppercase tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3"
-                    style={{ transform: "translateZ(100px)" }}
+                    className="bg-white/10 hover:bg-white/20 text-white px-6 py-3 text-[10px] font-bold uppercase tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3"
                   >
                     {fetchingYT ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                     {fetchingYT ? "Syncing..." : "Sync Metadata"}
@@ -266,18 +285,14 @@ export default function InfluencersAdmin() {
               </button>
               <button 
                 type="button"
-                onClick={(e) => {
-                  console.log("CLICK HANDLER CALLED");
-                  handleSave(e);
-                }} 
+                onClick={handleSave} 
                 disabled={saving}
-                className="relative z-[100] bg-white text-black px-10 py-4 text-[10px] font-black uppercase tracking-widest hover:bg-neon-blue transition-colors disabled:opacity-50"
-                style={{ transform: "translateZ(100px)" }}
+                className="bg-white text-black px-10 py-4 text-[10px] font-black uppercase tracking-widest hover:bg-neon-blue transition-colors disabled:opacity-50"
               >
                 {saving ? "SAVING DB..." : "SAVE CREATOR NODE"}
               </button>
             </div>
-          </GlassCard>
+          </div>
         )}
 
         {influencers.map((influencer) => (
