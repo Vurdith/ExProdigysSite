@@ -55,35 +55,52 @@ export default function InfluencersAdmin() {
     setFormData({});
   };
 
-  const handleSave = async () => {
+  const handleSave = async (e?: React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+    
+    console.log("SAVE BUTTON CLICKED");
+    
     if (!formData.name || !formData.subs || !formData.metric) {
       alert("Please fill in the required fields: Name, Subscribers, and Metric.");
       return;
     }
 
     setSaving(true);
+    console.log("STARTING SAVE...", formData);
+    
     try {
       // Create a clean object for the database (remove any metadata fields)
       const { id, created_at, ...payload } = formData as any;
       
       // Ensure numeric order_index
-      if (payload.order_index) payload.order_index = parseInt(payload.order_index);
+      if (payload.order_index !== undefined) {
+        payload.order_index = parseInt(String(payload.order_index)) || 0;
+      }
+
+      console.log("SENDING TO SUPABASE:", payload);
 
       let result;
       if (isEditing === "new") {
-        result = await supabase.from("influencers").insert([payload]);
+        result = await supabase.from("influencers").insert([payload]).select();
       } else {
         result = await supabase
           .from("influencers")
           .update(payload)
-          .eq("id", isEditing);
+          .eq("id", isEditing)
+          .select();
       }
+
+      console.log("SUPABASE RESULT:", result);
 
       if (result.error) {
         console.error("Supabase Save Error Details:", result.error);
         throw new Error(result.error.message);
       }
       
+      console.log("SAVE SUCCESSFUL, REFRESHING...");
       await fetchInfluencers();
       setIsEditing(null);
       setFormData({});
