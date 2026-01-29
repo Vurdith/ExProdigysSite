@@ -1,0 +1,58 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Influencer {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String
+  region      String
+  subs        String
+  focus       String
+  metric      String
+  order_index Int      @default(0)
+  created_at  DateTime @default(now()) @db.Timestamptz
+
+  @@map("influencers")
+}
+
+model PortfolioGame {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title       String
+  description String
+  image_url   String
+  stats       String
+  order_index Int      @default(0)
+  created_at  DateTime @default(now()) @db.Timestamptz
+
+  @@map("portfolio_games")
+}
+
+model MarketStat {
+  id             String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  category       String
+  label          String
+  value          String
+  detail         String
+  icon_name      String
+  is_highlighted Boolean  @default(false)
+  order_index    Int      @default(0)
+  created_at     DateTime @default(now()) @db.Timestamptz
+
+  @@map("market_stats")
+}
+
+model SiteContent {
+  id         String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  key        String   @unique
+  value      String
+  updated_at DateTime @default(now()) @db.Timestamptz
+
+  @@map("site_content")
+}
