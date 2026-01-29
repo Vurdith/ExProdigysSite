@@ -1,10 +1,10 @@
 -- Seed Influencers
 INSERT INTO influencers (name, youtube_url, avatar_url, bio, subs, metric, order_index)
 VALUES 
-  ('KreekCraft', 'https://youtube.com/@KreekCraft', 'https://yt3.googleusercontent.com/ytc/AIdro_n_Ym9_UjXGZ_f-M-F-I_Z-I-I-I-I-I-I-I-I-I-I-I', 'The top destination for Roblox news, live events, and high-energy gameplay.', '10M+', '250M+ Monthly Views', 0),
-  ('Flamingo', 'https://youtube.com/@Albert', 'https://yt3.googleusercontent.com/ytc/AIdro_n_Ym9_UjXGZ_f-M-F-I_Z-I-I-I-I-I-I-I-I-I-I-I', 'Pure chaos and comedy in the metaverse. One of the most influential voices in gaming.', '12M+', '300M+ Monthly Views', 1),
-  ('LankyBox', 'https://youtube.com/@LankyBox', 'https://yt3.googleusercontent.com/ytc/AIdro_n_Ym9_UjXGZ_f-M-F-I_Z-I-I-I-I-I-I-I-I-I-I-I', 'Global phenomenon specializing in high-fidelity story-driven content and animation.', '30M+', '1B+ Monthly Views', 2),
-  ('Julia MineGirl', 'https://youtube.com/@JuliaMineGirl', 'https://yt3.googleusercontent.com/ytc/AIdro_n_Ym9_UjXGZ_f-M-F-I_Z-I-I-I-I-I-I-I-I-I-I-I', 'The leading voice for family-friendly adventures in the Latin American market.', '9M+', '150M+ Monthly Views', 3);
+  ('KreekCraft', 'https://youtube.com/@KreekCraft', 'https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=200&h=200', 'The top destination for Roblox news, live events, and high-energy gameplay.', '10M+', '250M+ Monthly Views', 0),
+  ('Flamingo', 'https://youtube.com/@Albert', 'https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?auto=format&fit=crop&q=80&w=200&h=200', 'Pure chaos and comedy in the metaverse. One of the most influential voices in gaming.', '12M+', '300M+ Monthly Views', 1),
+  ('LankyBox', 'https://youtube.com/@LankyBox', 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=200&h=200', 'Global phenomenon specializing in high-fidelity story-driven content and animation.', '30M+', '1B+ Monthly Views', 2),
+  ('Julia MineGirl', 'https://youtube.com/@JuliaMineGirl', 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200&h=200', 'The leading voice for family-friendly adventures in the Latin American market.', '9M+', '150M+ Monthly Views', 3);
 
 -- Seed Portfolio Games
 INSERT INTO portfolio_games (title, description, image_url, stats, order_index)

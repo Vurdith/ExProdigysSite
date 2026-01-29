@@ -48,7 +48,7 @@ export function InfluencerNetwork() {
             subs: "10M+", 
             metric: "250M+ Monthly Views", 
             bio: "The top destination for Roblox news, live events, and high-energy gameplay.",
-            avatar_url: "https://yt3.googleusercontent.com/ytc/AIdro_n_Ym9_UjXGZ_f-M-F-I_Z-I-I-I-I-I-I-I-I-I-I-I", 
+            avatar_url: "https://images.unsplash.com/photo-1560250097-0b93528c311a?auto=format&fit=crop&q=80&w=200&h=200", 
             order_index: 0 
           },
           { 
@@ -57,7 +57,7 @@ export function InfluencerNetwork() {
             subs: "12M+", 
             metric: "300M+ Monthly Views", 
             bio: "Pure chaos and comedy in the metaverse. One of the most influential voices in gaming.",
-            avatar_url: "https://yt3.googleusercontent.com/ytc/AIdro_n_Ym9_UjXGZ_f-M-F-I_Z-I-I-I-I-I-I-I-I-I-I-I",
+            avatar_url: "https://images.unsplash.com/photo-1531427186611-ecfd6d936c79?auto=format&fit=crop&q=80&w=200&h=200",
             order_index: 1 
           },
           { 
@@ -66,7 +66,7 @@ export function InfluencerNetwork() {
             subs: "30M+", 
             metric: "1B+ Monthly Views", 
             bio: "Global phenomenon specializing in high-fidelity story-driven content and animation.",
-            avatar_url: "https://yt3.googleusercontent.com/ytc/AIdro_n_Ym9_UjXGZ_f-M-F-I_Z-I-I-I-I-I-I-I-I-I-I-I",
+            avatar_url: "https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&q=80&w=200&h=200",
             order_index: 2 
           },
           { 
@@ -75,7 +75,7 @@ export function InfluencerNetwork() {
             subs: "9M+", 
             metric: "150M+ Monthly Views", 
             bio: "The leading voice for family-friendly adventures in the Latin American market.",
-            avatar_url: "https://yt3.googleusercontent.com/ytc/AIdro_n_Ym9_UjXGZ_f-M-F-I_Z-I-I-I-I-I-I-I-I-I-I-I",
+            avatar_url: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&q=80&w=200&h=200",
             order_index: 3 
           }
         ]);
