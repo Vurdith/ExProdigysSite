@@ -11,14 +11,20 @@ export function SocialProof() {
 
   useEffect(() => {
     const fetchContent = async () => {
-      const { data, error } = await supabase
-        .from("site_content")
-        .select("value")
-        .eq("key", "founder_quote")
-        .single();
+      try {
+        const { data, error } = await supabase
+          .from("site_content")
+          .select("value")
+          .eq("key", "founder_quote")
+          .single();
 
-      if (data) setQuote(data.value);
-      setLoading(false);
+        if (error) throw error;
+        if (data) setQuote(data.value);
+      } catch (err) {
+        console.error("Error fetching content:", err);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchContent();

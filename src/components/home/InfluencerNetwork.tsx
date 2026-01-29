@@ -23,13 +23,20 @@ export function InfluencerNetwork() {
 
   useEffect(() => {
     const fetchInfluencers = async () => {
-      const { data, error } = await supabase
-        .from("influencers")
-        .select("*")
-        .order("order_index", { ascending: true });
+      try {
+        const { data, error } = await supabase
+          .from("influencers")
+          .select("*")
+          .order("order_index", { ascending: true });
 
-      if (data) setInfluencers(data);
-      setLoading(false);
+        if (error) throw error;
+        if (data) setInfluencers(data);
+      } catch (err) {
+        console.error("Error fetching influencers:", err);
+        // Fallback or handle UI state
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchInfluencers();

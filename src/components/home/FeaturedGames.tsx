@@ -20,13 +20,19 @@ export function FeaturedGames() {
 
   useEffect(() => {
     const fetchGames = async () => {
-      const { data, error } = await supabase
-        .from("portfolio_games")
-        .select("*")
-        .order("order_index", { ascending: true });
+      try {
+        const { data, error } = await supabase
+          .from("portfolio_games")
+          .select("*")
+          .order("order_index", { ascending: true });
 
-      if (data) setGames(data);
-      setLoading(false);
+        if (error) throw error;
+        if (data) setGames(data);
+      } catch (err) {
+        console.error("Error fetching games:", err);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchGames();

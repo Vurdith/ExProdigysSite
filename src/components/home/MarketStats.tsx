@@ -32,13 +32,19 @@ export function MarketStats() {
 
   useEffect(() => {
     const fetchStats = async () => {
-      const { data, error } = await supabase
-        .from("market_stats")
-        .select("*")
-        .order("order_index", { ascending: true });
+      try {
+        const { data, error } = await supabase
+          .from("market_stats")
+          .select("*")
+          .order("order_index", { ascending: true });
 
-      if (data) setStats(data);
-      setLoading(false);
+        if (error) throw error;
+        if (data) setStats(data);
+      } catch (err) {
+        console.error("Error fetching stats:", err);
+      } finally {
+        setLoading(false);
+      }
     };
 
     fetchStats();
