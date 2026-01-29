@@ -7,94 +7,79 @@ export interface YouTubeChannelData {
   avatarUrl: string;
 }
 
-const API_KEY = process.env.YOUTUBE_API_KEY;
-const BASE_URL = "https://www.googleapis.com/youtube/v3";
-
 export async function getChannelData(urlOrHandle: string): Promise<YouTubeChannelData | null> {
-  if (!API_KEY) {
-    throw new Error("YOUTUBE_API_KEY is not defined in environment variables");
-  }
+  const fullUrl = buildYouTubeUrl(urlOrHandle);
+  
+  try {
+    const response = await fetch(fullUrl, {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119.0.0.0 Safari/537.36",
+        "Accept-Language": "en-US,en;q=0.9",
+      },
+    });
 
-  const identifier = parseYouTubeIdentifier(urlOrHandle);
-  if (!identifier) return null;
+    if (!response.ok) return null;
 
-  let queryParam = "";
-  if (identifier.type === "handle") {
-    // YouTube handles include the @ in the API parameter
-    queryParam = `forHandle=${encodeURIComponent(identifier.value)}`;
-  } else if (identifier.type === "id") {
-    queryParam = `id=${identifier.value}`;
-  } else if (identifier.type === "username") {
-    queryParam = `forUsername=${identifier.value}`;
-  }
+    const html = await response.text();
+    
+    // Extract ytInitialData JSON
+    const dataMatch = html.match(/var ytInitialData = ({.*?});<\/script>/s);
+    if (!dataMatch) return null;
 
-  const response = await fetch(
-    `${BASE_URL}/channels?part=snippet,statistics&${queryParam}&key=${API_KEY}`
-  );
+    const json = JSON.parse(dataMatch[1]);
+    
+    // Extract metadata using deep path navigation
+    const metadata = json.metadata?.channelMetadataRenderer || {};
+    const header = json.header?.c4TabbedHeaderRenderer || json.header?.pageHeaderRenderer?.content?.pageHeaderViewModel || {};
+    
+    // Title
+    const title = metadata.title || "";
+    
+    // Description
+    const description = metadata.description || "";
+    
+    // Avatar
+    let avatarUrl = metadata.avatar?.thumbnails?.[0]?.url || "";
+    if (avatarUrl.startsWith("//")) avatarUrl = "https:" + avatarUrl;
 
-  const data = await response.json();
+    // Subscriber Count
+    let subscriberCount = "N/A";
+    
+    // Support for multiple YouTube UI versions
+    if (header.subscriberCountText?.simpleText) {
+      subscriberCount = header.subscriberCountText.simpleText.split(" ")[0];
+    } else if (header.metadata?.contentMetadataViewModel?.metadataRows) {
+        // Newer YouTube UI structure
+        const rows = header.metadata.contentMetadataViewModel.metadataRows;
+        for (const row of rows) {
+            const text = row.metadataParts?.[0]?.text?.content || "";
+            if (text.includes("subscribers")) {
+                subscriberCount = text.split(" ")[0];
+                break;
+            }
+        }
+    }
 
-  if (!data.items || data.items.length === 0) {
+    return {
+      id: metadata.externalId || "",
+      title,
+      description,
+      customUrl: metadata.ownerUrls?.[0] || fullUrl,
+      subscriberCount,
+      avatarUrl,
+    };
+  } catch (error) {
+    console.error("Scraping error:", error);
     return null;
   }
-
-  const channel = data.items[0];
-  const { snippet, statistics } = channel;
-
-  return {
-    id: channel.id,
-    title: snippet.title,
-    description: snippet.description,
-    customUrl: snippet.customUrl,
-    subscriberCount: formatSubscriberCount(statistics.subscriberCount),
-    avatarUrl: snippet.thumbnails.high?.url || snippet.thumbnails.default?.url,
-  };
 }
 
-function parseYouTubeIdentifier(input: string): { type: "handle" | "id" | "username"; value: string } | null {
-  // Clean input
-  const cleanInput = input.trim().replace(/\/$/, "");
-
-  // 1. Handle (e.g., @KreekCraft or youtube.com/@KreekCraft)
-  const handleMatch = cleanInput.match(/(?:youtube\.com\/)?(@[\w.-]+)/);
-  if (handleMatch) {
-    return { type: "handle", value: handleMatch[1] };
-  }
-
-  // 2. Channel ID (e.g., UC... or youtube.com/channel/UC...)
-  const idMatch = cleanInput.match(/(?:youtube\.com\/channel\/)?(UC[\w-]{22})/);
-  if (idMatch) {
-    return { type: "id", value: idMatch[1] };
-  }
-
-  // 3. Custom URL (legacy /c/ or /user/)
-  const customMatch = cleanInput.match(/youtube\.com\/(?:c\/|user\/)?([\w.-]+)/);
-  if (customMatch) {
-    // Try as handle first if it's not a known path
-    const value = customMatch[1];
-    if (cleanInput.includes("/user/")) {
-        return { type: "username", value };
-    }
-    // Most modern custom URLs are handles, but without the @
-    return { type: "handle", value: `@${value}` };
-  }
-
-  // 4. Just the handle/name provided
-  if (cleanInput.startsWith("@")) {
-    return { type: "handle", value: cleanInput };
-  }
-
-  return null;
-}
-
-function formatSubscriberCount(countStr: string): string {
-  const count = parseInt(countStr, 10);
-  if (isNaN(count)) return countStr;
-
-  if (count >= 1000000) {
-    return (count / 1000000).toFixed(1).replace(/\.0$/, "") + "M+";
-  } else if (count >= 1000) {
-    return (count / 1000).toFixed(1).replace(/\.0$/, "") + "K+";
-  }
-  return count.toString();
+function buildYouTubeUrl(input: string): string {
+  const cleanInput = input.trim();
+  
+  if (cleanInput.startsWith("http")) return cleanInput;
+  if (cleanInput.startsWith("@")) return `https://www.youtube.com/${cleanInput}`;
+  
+  // Default to handle if no protocol and no @
+  return `https://www.youtube.com/@${cleanInput}`;
 }
