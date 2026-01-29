@@ -43,6 +43,9 @@ export function InfluencerNetwork() {
   const xOffset = useTransform(scrollYProgress, [0, 1], ["5%", "-20%"]);
   const springX = useSpring(xOffset, { stiffness: 50, damping: 20 });
 
+  // Parallax for the background text
+  const bgTextX = useTransform(scrollYProgress, [0, 1], ["0%", "-30%"]);
+
   if (loading) {
     return (
       <section className="py-48 bg-void flex items-center justify-center">
@@ -59,7 +62,7 @@ export function InfluencerNetwork() {
       {/* 1. Massive Parallax Background Typography */}
       <div className="absolute inset-0 pointer-events-none opacity-[0.03] flex items-center">
         <motion.div 
-          style={{ x: useTransform(scrollYProgress, [0, 1], ["0%", "-30%"]) }}
+          style={{ x: bgTextX }}
           className="text-[40vw] font-black leading-none whitespace-nowrap select-none flex gap-20"
         >
           <span>AMPLIFY</span>
