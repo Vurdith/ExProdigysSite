@@ -33,7 +33,9 @@ export function FeaturedGames() {
           throw new Error("No data found");
         }
       } catch (err) {
-        console.error("Error fetching games:", err);
+        if (process.env.NODE_ENV === "development") {
+          console.error("Error fetching games:", err);
+        }
         // Fallback to static data
         setGames([
           { id: "1", title: "Cyber-City RPG", description: "A high-fidelity neon metropolis where brands integrate through digital fashion and interactive storefronts.", image_url: "/images/hero-1.png", stats: "1.2M+ Monthly Visits", order_index: 0 },

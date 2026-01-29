@@ -21,8 +21,10 @@ export function SocialProof() {
         if (error) throw error;
         if (data) setQuote(data.value);
       } catch (err) {
-        console.error("Error fetching content:", err);
-        // Fallback to static data if Supabase fails
+        // Fallback to static data if Supabase fails (silently in production to keep console clean)
+        if (process.env.NODE_ENV === "development") {
+          console.error("Error fetching content:", err);
+        }
         setQuote(defaultQuote);
       } finally {
         setLoading(false);

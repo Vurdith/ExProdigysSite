@@ -45,7 +45,9 @@ export function MarketStats() {
           throw new Error("No data found");
         }
       } catch (err) {
-        console.error("Error fetching stats:", err);
+        if (process.env.NODE_ENV === "development") {
+          console.error("Error fetching stats:", err);
+        }
         // Fallback to static data
         setStats([
           { id: "1", category: "Scale & Reach", label: "Daily Active Users", value: "88.9M", detail: "Q3 2024 Average", icon_name: "Users", is_highlighted: true, order_index: 0 },

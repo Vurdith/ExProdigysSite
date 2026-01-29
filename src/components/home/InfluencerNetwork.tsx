@@ -36,7 +36,9 @@ export function InfluencerNetwork() {
           throw new Error("No data found");
         }
       } catch (err) {
-        console.error("Error fetching influencers:", err);
+        if (process.env.NODE_ENV === "development") {
+          console.error("Error fetching influencers:", err);
+        }
         // Fallback to static data
         setInfluencers([
           { id: "1", name: "KreekCraft", region: "North America", subs: "10M+", focus: "Variety / Events", metric: "250M+ Monthly Views", order_index: 0 },
