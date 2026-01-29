@@ -28,13 +28,6 @@ export async function getChannelData(urlOrHandle: string): Promise<YouTubeChanne
 
     const json = JSON.parse(dataMatch[1]);
     
-    // DEBUG: Log top level keys to find the data structure
-    if (process.env.NODE_ENV === "development") {
-      console.log("YT JSON KEYS:", Object.keys(json));
-      if (json.header) console.log("YT HEADER KEYS:", Object.keys(json.header));
-      if (json.metadata) console.log("YT METADATA KEYS:", Object.keys(json.metadata));
-    }
-    
     // Extract metadata using deep path navigation
     const metadata = json.metadata?.channelMetadataRenderer || {};
     // Extract avatar from metadata or header
@@ -42,7 +35,10 @@ export async function getChannelData(urlOrHandle: string): Promise<YouTubeChanne
 
     // SUPPORT FOR NEWEST YT UI (Page Header View Model)
     const pageHeader = json.header?.pageHeaderRenderer?.content?.pageHeaderViewModel;
-    if (pageHeader?.image?.decoratedAvatarViewModel?.avatar?.avatar?.image?.thumbnails) {
+    if (pageHeader?.image?.decoratedAvatarViewModel?.avatar?.avatarViewModel?.image?.sources) {
+        const sources = pageHeader.image.decoratedAvatarViewModel.avatar.avatarViewModel.image.sources;
+        avatarUrl = sources[sources.length - 1].url;
+    } else if (pageHeader?.image?.decoratedAvatarViewModel?.avatar?.avatar?.image?.thumbnails) {
         const pfpThumbnails = pageHeader.image.decoratedAvatarViewModel.avatar.avatar.image.thumbnails;
         avatarUrl = pfpThumbnails[pfpThumbnails.length - 1].url;
     } else if (json.header?.c4TabbedHeaderRenderer?.avatar?.thumbnails) {
