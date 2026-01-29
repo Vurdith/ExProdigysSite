@@ -26,6 +26,7 @@ export default function InfluencersAdmin() {
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
+    // window.alert("ADMIN PAGE LOADED");
     fetchInfluencers();
   }, []);
 
@@ -57,30 +58,23 @@ export default function InfluencersAdmin() {
 
   const handleSave = async (e?: React.MouseEvent) => {
     if (e) {
-      e.preventDefault();
-      e.stopPropagation();
+      if (typeof e.preventDefault === 'function') e.preventDefault();
+      if (typeof e.stopPropagation === 'function') e.stopPropagation();
     }
     
-    console.log("SAVE BUTTON CLICKED");
-    
     if (!formData.name || !formData.subs || !formData.metric) {
-      alert("Please fill in the required fields: Name, Subscribers, and Metric.");
+      alert("Please fill in Name, Subscribers, and Metric.");
       return;
     }
 
     setSaving(true);
-    console.log("STARTING SAVE...", formData);
     
     try {
-      // Create a clean object for the database (remove any metadata fields)
       const { id, created_at, ...payload } = formData as any;
       
-      // Ensure numeric order_index
       if (payload.order_index !== undefined) {
         payload.order_index = parseInt(String(payload.order_index)) || 0;
       }
-
-      console.log("SENDING TO SUPABASE:", payload);
 
       let result;
       if (isEditing === "new") {
@@ -93,21 +87,15 @@ export default function InfluencersAdmin() {
           .select();
       }
 
-      console.log("SUPABASE RESULT:", result);
-
-      if (result.error) {
-        console.error("Supabase Save Error Details:", result.error);
-        throw new Error(result.error.message);
-      }
+      if (result.error) throw new Error(result.error.message);
       
-      console.log("SAVE SUCCESSFUL, REFRESHING...");
       await fetchInfluencers();
       setIsEditing(null);
       setFormData({});
-      alert("Creator node saved successfully!");
+      alert("Saved successfully!");
     } catch (error: any) {
-      console.error("Save error catch:", error);
-      alert(`Failed to save: ${error.message || "Unknown error"}`);
+      console.error("Save error:", error);
+      alert(`Error: ${error.message}`);
     } finally {
       setSaving(false);
     }
@@ -211,9 +199,11 @@ export default function InfluencersAdmin() {
                     />
                   </div>
                   <button 
+                    type="button"
                     onClick={fetchYouTubeData}
                     disabled={fetchingYT}
-                    className="bg-white/10 hover:bg-white/20 text-white px-6 py-3 text-[10px] font-bold uppercase tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3"
+                    className="relative z-[100] bg-white/10 hover:bg-white/20 text-white px-6 py-3 text-[10px] font-bold uppercase tracking-widest transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-3"
+                    style={{ transform: "translateZ(100px)" }}
                   >
                     {fetchingYT ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
                     {fetchingYT ? "Syncing..." : "Sync Metadata"}
@@ -275,11 +265,16 @@ export default function InfluencersAdmin() {
                 Discard Changes
               </button>
               <button 
-                onClick={handleSave} 
+                type="button"
+                onClick={(e) => {
+                  console.log("CLICK HANDLER CALLED");
+                  handleSave(e);
+                }} 
                 disabled={saving}
-                className="bg-white text-black px-10 py-4 text-[10px] font-black uppercase tracking-widest hover:bg-neon-blue transition-colors disabled:opacity-50"
+                className="relative z-[100] bg-white text-black px-10 py-4 text-[10px] font-black uppercase tracking-widest hover:bg-neon-blue transition-colors disabled:opacity-50"
+                style={{ transform: "translateZ(100px)" }}
               >
-                {saving ? "Saving..." : "Save Creator Node"}
+                {saving ? "SAVING DB..." : "SAVE CREATOR NODE"}
               </button>
             </div>
           </GlassCard>
