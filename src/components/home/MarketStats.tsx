@@ -39,9 +39,25 @@ export function MarketStats() {
           .order("order_index", { ascending: true });
 
         if (error) throw error;
-        if (data) setStats(data);
+        if (data && data.length > 0) {
+          setStats(data);
+        } else {
+          throw new Error("No data found");
+        }
       } catch (err) {
         console.error("Error fetching stats:", err);
+        // Fallback to static data
+        setStats([
+          { id: "1", category: "Scale & Reach", label: "Daily Active Users", value: "88.9M", detail: "Q3 2024 Average", icon_name: "Users", is_highlighted: true, order_index: 0 },
+          { id: "2", category: "Scale & Reach", label: "Monthly Engagement", value: "20.7B", detail: "Hours Spent in Q3", icon_name: "Clock", is_highlighted: false, order_index: 1 },
+          { id: "3", category: "Scale & Reach", label: "Monthly Active Users", value: "380M+", detail: "Estimated Global Reach", icon_name: "TrendingUp", is_highlighted: false, order_index: 2 },
+          { id: "4", category: "Demographics", label: "Users Over 13", value: "58%", detail: "Mature Audience Shift", icon_name: "Users", is_highlighted: false, order_index: 3 },
+          { id: "5", category: "Demographics", label: "Fastest Growing", value: "17-24", detail: "Age Demographic", icon_name: "TrendingUp", is_highlighted: true, order_index: 4 },
+          { id: "6", category: "Demographics", label: "Gender Split", value: "Near Even", detail: "Inclusive Market", icon_name: "Users", is_highlighted: false, order_index: 5 },
+          { id: "7", category: "The Digital Economy", label: "Quarterly Bookings", value: "$1.13B", detail: "34% YoY Growth", icon_name: "Wallet", is_highlighted: true, order_index: 6 },
+          { id: "8", category: "The Digital Economy", label: "Creator Payouts", value: "$800M+", detail: "Trailing 12 Months", icon_name: "CheckCircle2", is_highlighted: false, order_index: 7 },
+          { id: "9", category: "The Digital Economy", label: "Daily Avatar Updates", value: "1.6B", detail: "Digital Identity Focus", icon_name: "TrendingUp", is_highlighted: false, order_index: 8 }
+        ]);
       } finally {
         setLoading(false);
       }

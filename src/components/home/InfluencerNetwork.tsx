@@ -30,10 +30,20 @@ export function InfluencerNetwork() {
           .order("order_index", { ascending: true });
 
         if (error) throw error;
-        if (data) setInfluencers(data);
+        if (data && data.length > 0) {
+          setInfluencers(data);
+        } else {
+          throw new Error("No data found");
+        }
       } catch (err) {
         console.error("Error fetching influencers:", err);
-        // Fallback or handle UI state
+        // Fallback to static data
+        setInfluencers([
+          { id: "1", name: "KreekCraft", region: "North America", subs: "10M+", focus: "Variety / Events", metric: "250M+ Monthly Views", order_index: 0 },
+          { id: "2", name: "Flamingo", region: "North America", subs: "12M+", focus: "Comedy / Gameplay", metric: "300M+ Monthly Views", order_index: 1 },
+          { id: "3", name: "LankyBox", region: "Global", subs: "30M+", focus: "Story / Animation", metric: "1B+ Monthly Views", order_index: 2 },
+          { id: "4", name: "Julia MineGirl", region: "Brazil", subs: "9M+", focus: "Family / Adventure", metric: "150M+ Monthly Views", order_index: 3 }
+        ]);
       } finally {
         setLoading(false);
       }

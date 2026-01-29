@@ -22,6 +22,8 @@ export function SocialProof() {
         if (data) setQuote(data.value);
       } catch (err) {
         console.error("Error fetching content:", err);
+        // Fallback to static data if Supabase fails
+        setQuote(defaultQuote);
       } finally {
         setLoading(false);
       }

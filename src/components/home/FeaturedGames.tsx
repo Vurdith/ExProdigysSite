@@ -27,9 +27,19 @@ export function FeaturedGames() {
           .order("order_index", { ascending: true });
 
         if (error) throw error;
-        if (data) setGames(data);
+        if (data && data.length > 0) {
+          setGames(data);
+        } else {
+          throw new Error("No data found");
+        }
       } catch (err) {
         console.error("Error fetching games:", err);
+        // Fallback to static data
+        setGames([
+          { id: "1", title: "Cyber-City RPG", description: "A high-fidelity neon metropolis where brands integrate through digital fashion and interactive storefronts.", image_url: "/images/hero-1.png", stats: "1.2M+ Monthly Visits", order_index: 0 },
+          { id: "2", title: "Void Runners", description: "High-octane competitive racing through gravity-defying tracks. Featured in official global tournaments.", image_url: "/images/hero-2.png", stats: "500k+ Active Players", order_index: 1 },
+          { id: "3", title: "Eco-Quest", description: "An immersive nature simulation teaching sustainability through gamified challenges and community rewards.", image_url: "/images/hero-3.png", stats: "Top 10 Education", order_index: 2 }
+        ]);
       } finally {
         setLoading(false);
       }
