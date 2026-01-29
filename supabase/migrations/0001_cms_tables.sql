@@ -1,10 +1,11 @@
 -- Influencers Table
 CREATE TABLE IF NOT EXISTS influencers (
-  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   name TEXT NOT NULL,
-  region TEXT NOT NULL,
+  youtube_url TEXT,
+  avatar_url TEXT,
+  bio TEXT,
   subs TEXT NOT NULL,
-  focus TEXT NOT NULL,
   metric TEXT NOT NULL,
   order_index INTEGER DEFAULT 0,
   created_at TIMESTAMPTZ DEFAULT NOW()

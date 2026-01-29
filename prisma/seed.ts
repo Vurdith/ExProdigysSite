@@ -16,15 +16,18 @@ async function main() {
   try {
     // 1. Influencers
     const influencers = [
-      ['KreekCraft', 'North America', '10M+', 'Variety / Events', '250M+ Monthly Views', 0],
-      ['Flamingo', 'North America', '12M+', 'Comedy / Gameplay', '300M+ Monthly Views', 1],
-      ['LankyBox', 'Global', '30M+', 'Story / Animation', '1B+ Monthly Views', 2],
-      ['Julia MineGirl', 'Brazil', '9M+', 'Family / Adventure', '150M+ Monthly Views', 3],
+      ['KreekCraft', 'https://youtube.com/@KreekCraft', 'https://yt3.googleusercontent.com/ytc/AIdro_n_Ym9_UjXGZ_f-M-F-I_Z-I-I-I-I-I-I-I-I-I-I-I', 'The top destination for Roblox news, live events, and high-energy gameplay.', '10M+', '250M+ Monthly Views', 0],
+      ['Flamingo', 'https://youtube.com/@Albert', 'https://yt3.googleusercontent.com/ytc/AIdro_n_Ym9_UjXGZ_f-M-F-I_Z-I-I-I-I-I-I-I-I-I-I-I', 'Pure chaos and comedy in the metaverse. One of the most influential voices in gaming.', '12M+', '300M+ Monthly Views', 1],
+      ['LankyBox', 'https://youtube.com/@LankyBox', 'https://yt3.googleusercontent.com/ytc/AIdro_n_Ym9_UjXGZ_f-M-F-I_Z-I-I-I-I-I-I-I-I-I-I-I', 'Global phenomenon specializing in high-fidelity story-driven content and animation.', '30M+', '1B+ Monthly Views', 2],
+      ['Julia MineGirl', 'https://youtube.com/@JuliaMineGirl', 'https://yt3.googleusercontent.com/ytc/AIdro_n_Ym9_UjXGZ_f-M-F-I_Z-I-I-I-I-I-I-I-I-I-I-I', 'The leading voice for family-friendly adventures in the Latin American market.', '9M+', '150M+ Monthly Views', 3],
     ]
+
+    // Clear existing to avoid conflicts during testing
+    await client.query('DELETE FROM influencers')
 
     for (const inf of influencers) {
       await client.query(
-        'INSERT INTO influencers (name, region, subs, focus, metric, order_index) VALUES ($1, $2, $3, $4, $5, $6)',
+        'INSERT INTO influencers (name, youtube_url, avatar_url, bio, subs, metric, order_index) VALUES ($1, $2, $3, $4, $5, $6, $7)',
         inf
       )
     }
@@ -36,6 +39,7 @@ async function main() {
       ['Eco-Quest', 'An immersive nature simulation teaching sustainability through gamified challenges and community rewards.', '/images/hero-3.png', 'Top 10 Education', 2],
     ]
 
+    await client.query('DELETE FROM portfolio_games')
     for (const game of games) {
       await client.query(
         'INSERT INTO portfolio_games (title, description, image_url, stats, order_index) VALUES ($1, $2, $3, $4, $5)',
@@ -56,6 +60,7 @@ async function main() {
       ['The Digital Economy', 'Daily Avatar Updates', '1.6B', 'Digital Identity Focus', 'TrendingUp', false, 8],
     ]
 
+    await client.query('DELETE FROM market_stats')
     for (const stat of stats) {
       await client.query(
         'INSERT INTO market_stats (category, label, value, detail, icon_name, is_highlighted, order_index) VALUES ($1, $2, $3, $4, $5, $6, $7)',

@@ -3,15 +3,16 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 import { motion, useScroll, useTransform, useSpring } from "framer-motion";
-import { ArrowUpRight, Globe2 } from "lucide-react";
+import { ArrowUpRight, Youtube } from "lucide-react";
 import { useRef } from "react";
 
 interface Influencer {
   id: string;
   name: string;
-  region: string;
+  youtube_url?: string;
+  avatar_url?: string;
+  bio?: string;
   subs: string;
-  focus: string;
   metric: string;
   order_index: number;
 }
@@ -41,10 +42,42 @@ export function InfluencerNetwork() {
         }
         // Fallback to static data
         setInfluencers([
-          { id: "1", name: "KreekCraft", region: "North America", subs: "10M+", focus: "Variety / Events", metric: "250M+ Monthly Views", order_index: 0 },
-          { id: "2", name: "Flamingo", region: "North America", subs: "12M+", focus: "Comedy / Gameplay", metric: "300M+ Monthly Views", order_index: 1 },
-          { id: "3", name: "LankyBox", region: "Global", subs: "30M+", focus: "Story / Animation", metric: "1B+ Monthly Views", order_index: 2 },
-          { id: "4", name: "Julia MineGirl", region: "Brazil", subs: "9M+", focus: "Family / Adventure", metric: "150M+ Monthly Views", order_index: 3 }
+          { 
+            id: "1", 
+            name: "KreekCraft", 
+            subs: "10M+", 
+            metric: "250M+ Monthly Views", 
+            bio: "The top destination for Roblox news, live events, and high-energy gameplay.",
+            avatar_url: "https://yt3.googleusercontent.com/ytc/AIdro_n_Ym9_UjXGZ_f-M-F-I_Z-I-I-I-I-I-I-I-I-I-I-I", 
+            order_index: 0 
+          },
+          { 
+            id: "2", 
+            name: "Flamingo", 
+            subs: "12M+", 
+            metric: "300M+ Monthly Views", 
+            bio: "Pure chaos and comedy in the metaverse. One of the most influential voices in gaming.",
+            avatar_url: "https://yt3.googleusercontent.com/ytc/AIdro_n_Ym9_UjXGZ_f-M-F-I_Z-I-I-I-I-I-I-I-I-I-I-I",
+            order_index: 1 
+          },
+          { 
+            id: "3", 
+            name: "LankyBox", 
+            subs: "30M+", 
+            metric: "1B+ Monthly Views", 
+            bio: "Global phenomenon specializing in high-fidelity story-driven content and animation.",
+            avatar_url: "https://yt3.googleusercontent.com/ytc/AIdro_n_Ym9_UjXGZ_f-M-F-I_Z-I-I-I-I-I-I-I-I-I-I-I",
+            order_index: 2 
+          },
+          { 
+            id: "4", 
+            name: "Julia MineGirl", 
+            subs: "9M+", 
+            metric: "150M+ Monthly Views", 
+            bio: "The leading voice for family-friendly adventures in the Latin American market.",
+            avatar_url: "https://yt3.googleusercontent.com/ytc/AIdro_n_Ym9_UjXGZ_f-M-F-I_Z-I-I-I-I-I-I-I-I-I-I-I",
+            order_index: 3 
+          }
         ]);
       } finally {
         setLoading(false);
@@ -59,10 +92,6 @@ export function InfluencerNetwork() {
     offset: ["start end", "end start"],
   });
 
-  const xOffset = useTransform(scrollYProgress, [0, 1], ["5%", "-20%"]);
-  const springX = useSpring(xOffset, { stiffness: 50, damping: 20 });
-
-  // Parallax for the background text
   const bgTextX = useTransform(scrollYProgress, [0, 1], ["0%", "-30%"]);
 
   if (loading) {
@@ -73,7 +102,6 @@ export function InfluencerNetwork() {
     );
   }
 
-  // Duplicate for infinite-feeling loop
   const allInfluencers = [...influencers, ...influencers];
 
   return (
@@ -114,7 +142,7 @@ export function InfluencerNetwork() {
       {/* 2. Seamless Panning Roster Rail */}
       <div className="relative flex">
         <motion.div
-          className="flex gap-1"
+          className="flex gap-4"
           animate={{
             x: [0, "-50%"],
           }}
@@ -122,7 +150,7 @@ export function InfluencerNetwork() {
             x: {
               repeat: Infinity,
               repeatType: "loop",
-              duration: 35,
+              duration: 40,
               ease: "linear",
             },
           }}
@@ -131,30 +159,46 @@ export function InfluencerNetwork() {
           {allInfluencers.map((influencer, i) => (
             <div 
               key={`${influencer.id}-${i}`}
-              className="group relative bg-void w-[350px] md:w-[450px] p-12 md:p-16 border border-white/5 hover:bg-white/[0.02] transition-colors duration-700 flex-shrink-0"
+              className="group relative bg-void w-[380px] md:w-[480px] p-10 md:p-14 border border-white/5 hover:bg-white/[0.02] transition-colors duration-700 flex-shrink-0"
             >
-              {/* Background Initial */}
-              <div className="absolute top-4 right-8 text-white/[0.02] text-9xl font-black select-none group-hover:text-white/[0.05] transition-colors duration-700">
-                {influencer.name[0]}
-              </div>
-
-              <div className="relative z-10 space-y-16">
+              <div className="relative z-10 space-y-12">
                 <div className="flex justify-between items-start">
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-white/40 font-mono text-[10px] tracking-widest uppercase">
-                      <Globe2 className="w-3 h-3 text-neon-blue" />
-                      {influencer.region}
+                  <div className="flex items-center gap-6">
+                    {influencer.avatar_url ? (
+                      <img 
+                        src={influencer.avatar_url} 
+                        alt={influencer.name} 
+                        className="w-16 h-16 rounded-full border-2 border-white/5 grayscale group-hover:grayscale-0 transition-all duration-700"
+                      />
+                    ) : (
+                      <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-xl font-black text-white/20 border-2 border-white/5">
+                        {influencer.name[0]}
+                      </div>
+                    )}
+                    <div>
+                      <h3 className="text-3xl font-bold text-white tracking-tight group-hover:translate-x-2 transition-transform duration-500">
+                        {influencer.name}
+                      </h3>
+                      <div className="flex items-center gap-2 mt-1">
+                        <Youtube className="w-3 h-3 text-neon-blue" />
+                        <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Creator Node</span>
+                      </div>
                     </div>
-                    <h3 className="text-4xl font-bold text-white tracking-tight group-hover:translate-x-2 transition-transform duration-500">
-                      {influencer.name}
-                    </h3>
                   </div>
-                  <ArrowUpRight className="w-5 h-5 text-white/20 group-hover:text-white transition-colors duration-500" />
+                  {influencer.youtube_url && (
+                    <a href={influencer.youtube_url} target="_blank" rel="noopener noreferrer">
+                      <ArrowUpRight className="w-5 h-5 text-white/20 hover:text-white transition-colors duration-500" />
+                    </a>
+                  )}
                 </div>
 
-                <div className="grid grid-cols-2 gap-12">
+                <p className="text-white/60 text-sm leading-relaxed line-clamp-3 min-h-[4.5rem]">
+                  {influencer.bio || "Active distribution node within the Burgundy Ventures network, specializing in high-fidelity metaverse experiences."}
+                </p>
+
+                <div className="grid grid-cols-2 gap-8 pt-8 border-t border-white/5">
                   <div className="space-y-1">
-                    <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Subscriber Reach</p>
+                    <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Aggregate Reach</p>
                     <p className="text-3xl font-black text-white tracking-tighter">{influencer.subs}</p>
                   </div>
                   <div className="space-y-1">
@@ -162,19 +206,13 @@ export function InfluencerNetwork() {
                     <p className="text-sm font-medium text-white/70 leading-tight">{influencer.metric}</p>
                   </div>
                 </div>
-
-                <div className="pt-8 flex items-center justify-between">
-                  <span className="px-4 py-1.5 border border-white/10 text-[9px] font-bold uppercase tracking-[0.3em] text-white/60 group-hover:border-white/40 group-hover:text-white transition-all duration-500">
-                    {influencer.focus}
-                  </span>
-                </div>
               </div>
             </div>
           ))}
         </motion.div>
       </div>
 
-      {/* 3. Global Summary Footer - Re-aligned */}
+      {/* 3. Global Summary Footer */}
       <div className="container mx-auto px-6 max-w-6xl mt-32 relative z-10">
         <div className="flex flex-col md:flex-row justify-between items-end gap-12">
           <div className="flex items-baseline gap-8">
