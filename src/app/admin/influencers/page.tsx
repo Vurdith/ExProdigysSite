@@ -23,19 +23,26 @@ export default function InfluencersAdmin() {
   const [isEditing, setIsEditing] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<Influencer>>({});
   const [fetchingYT, setFetchingYT] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     fetchInfluencers();
   }, []);
 
   const fetchInfluencers = async () => {
-    const { data, error } = await supabase
-      .from("influencers")
-      .select("*")
-      .order("order_index", { ascending: true });
+    try {
+      const { data, error } = await supabase
+        .from("influencers")
+        .select("*")
+        .order("order_index", { ascending: true });
 
-    if (data) setInfluencers(data);
-    setLoading(false);
+      if (error) throw error;
+      if (data) setInfluencers(data);
+    } catch (error: any) {
+      console.error("Fetch influencers error:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleEdit = (influencer: Influencer) => {
@@ -54,26 +61,38 @@ export default function InfluencersAdmin() {
       return;
     }
 
+    setSaving(true);
     try {
-      const { id, created_at, ...cleanData } = formData as any;
+      // Create a clean object for the database (remove any metadata fields)
+      const { id, created_at, ...payload } = formData as any;
       
+      // Ensure numeric order_index
+      if (payload.order_index) payload.order_index = parseInt(payload.order_index);
+
+      let result;
       if (isEditing === "new") {
-        const { error } = await supabase.from("influencers").insert([cleanData]);
-        if (error) throw error;
+        result = await supabase.from("influencers").insert([payload]);
       } else {
-        const { error } = await supabase
+        result = await supabase
           .from("influencers")
-          .update(cleanData)
+          .update(payload)
           .eq("id", isEditing);
-        if (error) throw error;
+      }
+
+      if (result.error) {
+        console.error("Supabase Save Error Details:", result.error);
+        throw new Error(result.error.message);
       }
       
       await fetchInfluencers();
       setIsEditing(null);
       setFormData({});
+      alert("Creator node saved successfully!");
     } catch (error: any) {
-      console.error("Save error:", error);
+      console.error("Save error catch:", error);
       alert(`Failed to save: ${error.message || "Unknown error"}`);
+    } finally {
+      setSaving(false);
     }
   };
 
@@ -240,9 +259,10 @@ export default function InfluencersAdmin() {
               </button>
               <button 
                 onClick={handleSave} 
-                className="bg-white text-black px-10 py-4 text-[10px] font-black uppercase tracking-widest hover:bg-neon-blue transition-colors"
+                disabled={saving}
+                className="bg-white text-black px-10 py-4 text-[10px] font-black uppercase tracking-widest hover:bg-neon-blue transition-colors disabled:opacity-50"
               >
-                Save Creator Node
+                {saving ? "Saving..." : "Save Creator Node"}
               </button>
             </div>
           </GlassCard>
