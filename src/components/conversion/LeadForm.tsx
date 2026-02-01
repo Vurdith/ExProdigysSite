@@ -76,16 +76,14 @@ export function LeadForm({
     >
       <div className="pointer-events-none absolute -inset-8 rounded-[32px] border border-white/10 bg-gradient-to-br from-white/[0.08] via-transparent to-transparent rotate-1" />
       <div className="pointer-events-none absolute inset-3 rounded-3xl border border-white/10" />
-      <div className="pointer-events-none absolute right-6 top-6 h-20 w-20 rounded-full bg-gradient-to-br from-neon-purple/30 via-neon-purple/10 to-transparent opacity-80" />
-      <div className="pointer-events-none absolute left-10 bottom-6 h-16 w-40 rounded-full border border-white/10 bg-white/[0.02]" />
       {!compact && (
         <div className="space-y-2 relative z-10">
           <span className="text-white/60 text-[10px] font-bold uppercase tracking-[0.4em] block">
             Strategy Intake
           </span>
-          <h3 className="text-2xl font-bold text-white">Start your build.</h3>
+          <h3 className="text-2xl font-bold text-white">Let’s build this.</h3>
           <p className="text-white/60 text-sm">
-            Share your basics and we will respond with a tailored next step.
+            Share the basics and we will send a tailored next step.
           </p>
         </div>
       )}
@@ -99,7 +97,7 @@ export function LeadForm({
             className="space-y-4 relative z-10"
           >
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-widest text-white/50 mb-2">
+              <label className="block text-xs font-medium text-white/60 mb-2">
                 Name
               </label>
               <input
@@ -115,7 +113,7 @@ export function LeadForm({
               />
             </div>
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-widest text-white/50 mb-2">
+              <label className="block text-xs font-medium text-white/60 mb-2">
                 Email
               </label>
               <input
@@ -130,38 +128,9 @@ export function LeadForm({
                 onBlur={handleBlur}
               />
             </div>
-            {!compact && (
-              <MagneticButton
-                className="w-full bg-white text-black"
-                onClick={() => setStep(2)}
-                variant="primary"
-              >
-                Next Step
-              </MagneticButton>
-            )}
-            {compact && (
-                <MagneticButton
-                className="w-full bg-white text-black"
-                variant="primary"
-                // type="submit" // Need to handle this click to submit if compact
-              >
-                {loading ? "Sending..." : "Get Report"}
-              </MagneticButton>
-            )}
-          </motion.div>
-        )}
-
-        {step === 2 && !compact && (
-          <motion.div
-            key="step2"
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            exit={{ opacity: 0, x: 20 }}
-            className="space-y-4 relative z-10"
-          >
             <div>
-              <label className="block text-[10px] font-bold uppercase tracking-widest text-white/50 mb-2">
-                Company (Optional)
+              <label className="block text-xs font-medium text-white/60 mb-2">
+                Company / Brand (optional)
               </label>
               <input
                 type="text"
@@ -177,16 +146,10 @@ export function LeadForm({
             <MagneticButton
               className="w-full bg-white text-black"
               variant="primary"
+              type="submit"
             >
-              {loading ? "Submitting..." : "Complete Request"}
+              {loading ? "Submitting..." : compact ? "Get Report" : "Complete Request"}
             </MagneticButton>
-            <button
-              type="button"
-              onClick={() => setStep(1)}
-              className="w-full text-sm text-white/40 hover:text-white transition-colors"
-            >
-              Back
-            </button>
           </motion.div>
         )}
       </AnimatePresence>

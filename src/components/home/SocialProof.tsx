@@ -52,10 +52,7 @@ export function SocialProof() {
           >
             <div className="absolute -inset-6 rounded-[32px] border border-white/10 bg-gradient-to-br from-white/[0.08] to-transparent rotate-1 pointer-events-none" />
             <div className="absolute -right-12 -top-8 h-24 w-48 rounded-full border border-white/10 bg-white/[0.03] blur-sm pointer-events-none" />
-            <GlassCard className="p-12 border-white/10 bg-white/[0.03] shadow-[0_0_80px_rgba(255,255,255,0.06)]">
-              <span className="text-white/60 text-[10px] font-bold uppercase tracking-[0.4em] block mb-8">
-                Executive Insight
-              </span>
+            <GlassCard className="p-12 border-white/10 bg-white/[0.06] shadow-[0_0_80px_rgba(255,255,255,0.08)]">
               <div className="flex items-center gap-6 mb-8">
                 <div className="w-16 h-16 rounded-full bg-white/10 overflow-hidden border border-white/20">
                    {/* Placeholder for real team photo */}
@@ -63,7 +60,6 @@ export function SocialProof() {
                 </div>
                 <div>
                   <h4 className="font-bold text-white">Burgundy Ventures</h4>
-                  <p className="text-white/70 text-xs uppercase tracking-widest">Executive Team</p>
                 </div>
               </div>
               <p className="text-2xl italic text-white/90 leading-relaxed mb-10">
@@ -73,9 +69,11 @@ export function SocialProof() {
                 {[1,2,3,4,5].map(i => (
                   <span key={i} className="text-neon-blue text-lg">★</span>
                 ))}
-                <span className="ml-4 text-[10px] font-bold text-white/60 uppercase tracking-widest">
-                  Top-Rated Agency 2026
-                </span>
+              </div>
+              <div className="mt-8 border-t border-white/10 pt-6">
+                <p className="text-white/70 text-sm">
+                  Client outcome: 1.1M visitors in 3 days for a global brand launch.
+                </p>
               </div>
             </GlassCard>
           </motion.div>
@@ -83,36 +81,50 @@ export function SocialProof() {
           {/* Risk Reversal / Friction Removal */}
           <div className="space-y-12 relative">
             <div className="absolute -right-8 top-0 h-[420px] w-[4px] bg-gradient-to-b from-white/40 via-white/10 to-transparent opacity-60 pointer-events-none hidden lg:block" />
-            <motion.span
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              className="text-white/60 font-bold uppercase tracking-[0.4em] text-[10px] block"
-            >
-              Why Partner With Us
-            </motion.span>
             <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-white drop-shadow-[0_20px_50px_rgba(0,0,0,0.6)]">
               Removing the <br /> <span className="text-white/40 italic font-light">Fear of Failure.</span>
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {[
-                { title: "Cancel Anytime", desc: "No long-term lock-ins until you see value." },
-                { title: "Risk-Free Trial", desc: "Prototype phase with money-back guarantee." },
-                { title: "Real-Time Comms", desc: "Direct access to lead developers 24/7." },
-                { title: "Fixed Pricing", desc: "No hidden fees or scope-creep surprises." }
-              ].map((item, i) => (
-                <motion.div
-                  key={item.title}
-                  initial={{ opacity: 0, y: 10 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  transition={{ delay: i * 0.1 }}
-                  viewport={{ once: true }}
-                  className="border border-white/10 bg-white/[0.02] bg-gradient-to-br from-white/[0.06] via-white/[0.02] to-transparent px-6 py-6 rounded-2xl hover:border-white/20 transition-colors"
-                >
-                  <h5 className="font-bold text-white mb-2 text-[11px] uppercase tracking-[0.3em]">{item.title}</h5>
-                  <p className="text-white/70 text-sm leading-relaxed">{item.desc}</p>
-                </motion.div>
-              ))}
-            </div>
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="border border-white/10 bg-white/[0.02] bg-gradient-to-br from-white/[0.06] via-white/[0.02] to-transparent px-8 py-8 rounded-2xl"
+            >
+              <div className="flex items-center gap-4">
+                <span className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-xs font-semibold text-white/70">
+                  A
+                </span>
+                <div className="relative flex-1 h-px bg-gradient-to-r from-white/30 via-white/10 to-white/30">
+                  <span className="absolute left-[28%] -top-1.5 h-3 w-3 rounded-full bg-neon-blue/80 ring-4 ring-neon-blue/20" />
+                  <span className="absolute left-1/2 -top-1.5 h-3 w-3 rounded-full bg-neon-purple/80 ring-4 ring-neon-purple/20" />
+                  <span className="absolute left-[72%] -top-1.5 h-3 w-3 rounded-full bg-white/80 ring-4 ring-white/10" />
+                </div>
+                <span className="w-8 h-8 rounded-full border border-white/20 flex items-center justify-center text-xs font-semibold text-white/70">
+                  B
+                </span>
+              </div>
+              <div className="mt-4 flex items-center justify-between text-sm text-white/60">
+                <span>Concept</span>
+                <span>Launch</span>
+              </div>
+              <div className="mt-8 space-y-4 text-sm text-white/70">
+                <div className="flex items-start gap-3">
+                  <span className="mt-2 h-2 w-2 rounded-full bg-neon-blue/90" />
+                  <p><span className="text-white/90 font-medium">Game designers make ideas reality.</span></p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <span className="mt-2 h-2 w-2 rounded-full bg-neon-purple/90" />
+                  <p><span className="text-white/90 font-medium">Top-of-the-line developers implement.</span></p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <span className="mt-2 h-2 w-2 rounded-full bg-white/80" />
+                  <p><span className="text-white/90 font-medium">Industry-leading influencers market.</span></p>
+                </div>
+              </div>
+              <p className="mt-8 text-white/70 text-sm leading-relaxed">
+                We leverage our experience to unite brand integration, leading Roblox powerhouses, and global industry influencers creating standout experiences across the Roblox metaverse.
+              </p>
+            </motion.div>
           </div>
         </div>
       </div>

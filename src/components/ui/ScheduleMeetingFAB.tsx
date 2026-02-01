@@ -33,7 +33,7 @@ export function ScheduleMeetingFAB() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setIsOpen(false)}
-            className="absolute inset-0 bg-gradient-to-br from-black/90 via-black/70 to-black/80"
+            className="absolute inset-0 bg-gradient-to-br from-black/95 via-black/85 to-black/90"
           />
           
           <motion.div
@@ -41,7 +41,7 @@ export function ScheduleMeetingFAB() {
             animate={{ scale: 1, y: 0, opacity: 1 }}
             className="relative w-full max-w-lg"
           >
-            <GlassCard className="relative border-white/10 shadow-glow">
+            <GlassCard className="relative border-white/10 bg-white/[0.05] shadow-glow">
               <button
                 onClick={() => setIsOpen(false)}
                 className="absolute top-6 right-6 text-white/40 hover:text-white transition-colors"
@@ -49,16 +49,12 @@ export function ScheduleMeetingFAB() {
                 <X className="w-5 h-5" />
               </button>
 
-              <div className="mb-10">
-                <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/40 block mb-4">
-                  Direct Pipeline
-                </span>
-                <h3 className="text-3xl font-bold mb-4">
-                  Schedule a Strategy Session
+              <div className="mb-8">
+                <h3 className="text-3xl font-bold mb-3">
+                  Schedule a strategy session
                 </h3>
-                <p className="text-white/70">
-                  Connect with our executive team to audit your digital assets and 
-                  forecast your ROI in the metaverse.
+                <p className="text-white/70 text-sm leading-relaxed">
+                  Connect with our team to audit your digital assets and map the fastest route to launch.
                 </p>
               </div>
 

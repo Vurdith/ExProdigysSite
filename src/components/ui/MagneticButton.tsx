@@ -10,6 +10,7 @@ interface MagneticButtonProps {
   onClick?: () => void;
   variant?: "primary" | "secondary" | "ghost";
   disabled?: boolean;
+  type?: "button" | "submit" | "reset";
 }
 
 export function MagneticButton({
@@ -18,6 +19,7 @@ export function MagneticButton({
   onClick,
   variant = "primary",
   disabled = false,
+  type = "button",
 }: MagneticButtonProps) {
   const ref = useRef<HTMLButtonElement>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
@@ -59,6 +61,7 @@ export function MagneticButton({
       onClick={disabled ? undefined : onClick}
       disabled={disabled}
       aria-disabled={disabled}
+      type={type}
     >
       {children}
     </motion.button>

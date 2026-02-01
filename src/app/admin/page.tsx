@@ -1,16 +1,103 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { GlassCard } from "@/components/ui/GlassCard";
-import { Users, Gamepad2, BarChart3, Settings } from "lucide-react";
+import { Users, Gamepad2, BarChart3, Settings, Save } from "lucide-react";
 import Link from "next/link";
+import { MagneticButton } from "@/components/ui/MagneticButton";
 
 export default function AdminDashboard() {
+  const defaultMetrics = [
+    { label: "Games Created", value: "20+" },
+    { label: "Influencer Partners", value: "40+" },
+    { label: "Games Worked With", value: "60+" },
+    { label: "Companies Worked With", value: "50+" },
+  ];
+  const [heroMetrics, setHeroMetrics] = useState(defaultMetrics);
+  const [savingMetrics, setSavingMetrics] = useState(false);
+  const [metricsStatus, setMetricsStatus] = useState<string | null>(null);
+
   const stats = [
     { label: "Total Influencers", value: "5", icon: Users, href: "/admin/influencers" },
     { label: "Portfolio Items", value: "4", icon: Gamepad2, href: "/admin/portfolio" },
     { label: "Market Stats", value: "9", icon: BarChart3, href: "/admin/stats" },
     { label: "Global Settings", value: "Active", icon: Settings, href: "/admin/content" },
   ];
+
+  useEffect(() => {
+    const loadMetrics = async () => {
+      try {
+        const response = await fetch("/api/admin/content");
+        const result = await response.json();
+        if (!response.ok || result.error || !result.data) return;
+
+        const map = new Map<string, string>(
+          result.data.map((row: { key: string; value: string }) => [row.key, row.value])
+        );
+        const next = [
+          {
+            label: map.get("hero_metric_1_label") || defaultMetrics[0].label,
+            value: map.get("hero_metric_1_value") || defaultMetrics[0].value,
+          },
+          {
+            label: map.get("hero_metric_2_label") || defaultMetrics[1].label,
+            value: map.get("hero_metric_2_value") || defaultMetrics[1].value,
+          },
+          {
+            label: map.get("hero_metric_3_label") || defaultMetrics[2].label,
+            value: map.get("hero_metric_3_value") || defaultMetrics[2].value,
+          },
+          {
+            label: map.get("hero_metric_4_label") || defaultMetrics[3].label,
+            value: map.get("hero_metric_4_value") || defaultMetrics[3].value,
+          },
+        ];
+        setHeroMetrics(next);
+      } catch {
+        // keep defaults
+      }
+    };
+
+    loadMetrics();
+  }, []);
+
+  const handleMetricChange = (index: number, field: "label" | "value", value: string) => {
+    setHeroMetrics((prev) =>
+      prev.map((item, i) => (i === index ? { ...item, [field]: value } : item))
+    );
+  };
+
+  const handleSaveMetrics = async () => {
+    setSavingMetrics(true);
+    setMetricsStatus(null);
+    try {
+      const items = [
+        { key: "hero_metric_1_label", value: heroMetrics[0]?.label || "" },
+        { key: "hero_metric_1_value", value: heroMetrics[0]?.value || "" },
+        { key: "hero_metric_2_label", value: heroMetrics[1]?.label || "" },
+        { key: "hero_metric_2_value", value: heroMetrics[1]?.value || "" },
+        { key: "hero_metric_3_label", value: heroMetrics[2]?.label || "" },
+        { key: "hero_metric_3_value", value: heroMetrics[2]?.value || "" },
+        { key: "hero_metric_4_label", value: heroMetrics[3]?.label || "" },
+        { key: "hero_metric_4_value", value: heroMetrics[3]?.value || "" },
+      ];
+      const response = await fetch("/api/admin/content", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ items }),
+      });
+      const result = await response.json();
+      if (!response.ok || result.error) {
+        throw new Error(result.error || "Failed to save.");
+      }
+      setMetricsStatus("Hero metrics saved.");
+    } catch (error: any) {
+      setMetricsStatus(error.message || "Failed to save.");
+    } finally {
+      setSavingMetrics(false);
+      setTimeout(() => setMetricsStatus(null), 3000);
+    }
+  };
 
   return (
     <div className="space-y-12">
@@ -91,6 +178,53 @@ export default function AdminDashboard() {
           </div>
         </GlassCard>
       </div>
+
+      <GlassCard className="p-10 border-white/10 bg-white/[0.03]">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <p className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/50">
+              Hero Metrics
+            </p>
+            <h3 className="text-2xl font-bold text-white mt-2">Homepage Stats Grid</h3>
+          </div>
+          <MagneticButton
+            className="bg-white text-black px-8 py-3 text-[10px] font-black uppercase tracking-[0.3em]"
+            onClick={handleSaveMetrics}
+            variant="primary"
+          >
+            <Save className="w-4 h-4 mr-2" />
+            {savingMetrics ? "Saving..." : "Save Metrics"}
+          </MagneticButton>
+        </div>
+        {metricsStatus && (
+          <div className="mb-6 border border-white/10 bg-white/5 px-4 py-3 text-[10px] font-bold uppercase tracking-widest text-white/70 rounded-2xl">
+            {metricsStatus}
+          </div>
+        )}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {heroMetrics.map((metric, index) => (
+            <div key={`${metric.label}-${index}`} className="border border-white/10 bg-white/[0.02] p-6">
+              <label className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/50 block mb-3">
+                Metric {index + 1}
+              </label>
+              <div className="space-y-4">
+                <input
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/40 focus:outline-none focus:border-neon-blue/80 focus:ring-1 focus:ring-neon-blue/50"
+                  placeholder="Label"
+                  value={metric.label}
+                  onChange={(e) => handleMetricChange(index, "label", e.target.value)}
+                />
+                <input
+                  className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/40 focus:outline-none focus:border-neon-blue/80 focus:ring-1 focus:ring-neon-blue/50"
+                  placeholder="Value"
+                  value={metric.value}
+                  onChange={(e) => handleMetricChange(index, "value", e.target.value)}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      </GlassCard>
     </div>
   );
 }

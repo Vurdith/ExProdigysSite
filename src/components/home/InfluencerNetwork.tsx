@@ -119,16 +119,9 @@ export function InfluencerNetwork() {
         </motion.div>
       </div>
 
-      <div className="container mx-auto px-6 max-w-6xl relative z-10 mb-32">
+      <div className="container mx-auto px-6 max-w-6xl relative z-10 mb-24">
         {/* Editorial Header */}
         <div className="flex flex-col gap-8 border-l-2 border-white/10 pl-12">
-          <motion.span
-            initial={{ opacity: 0, x: -20 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            className="text-white/60 font-bold uppercase tracking-[0.6em] text-[10px]"
-          >
-            GLOBAL DISTRIBUTION
-          </motion.span>
           <motion.h2
             initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
@@ -137,6 +130,9 @@ export function InfluencerNetwork() {
             TALENT <br />
             <span className="text-white/20 italic font-light">WITHOUT BORDERS.</span>
           </motion.h2>
+          <p className="text-white/60 max-w-2xl">
+            These are our influencer partners. We work with creators who already command trust and convert that trust into launches that stick.
+          </p>
         </div>
       </div>
 
@@ -160,7 +156,7 @@ export function InfluencerNetwork() {
           {allInfluencers.map((influencer, i) => (
             <div 
               key={`${influencer.id}-${i}`}
-              className="group relative bg-void w-[380px] md:w-[480px] p-10 md:p-14 border border-white/5 hover:bg-white/[0.02] transition-colors duration-700 flex-shrink-0"
+              className="group relative bg-void w-[380px] md:w-[480px] p-10 md:p-14 border border-white/15 bg-gradient-to-br from-white/[0.12] via-white/[0.04] to-transparent hover:border-white/25 transition-colors duration-700 flex-shrink-0"
             >
               <div className="relative z-10 space-y-12">
                 <div className="flex justify-between items-start">
@@ -187,7 +183,7 @@ export function InfluencerNetwork() {
                       </h3>
                       <div className="flex items-center gap-2 mt-1">
                         <Youtube className="w-3 h-3 text-neon-blue" />
-                        <span className="text-[10px] font-bold text-white/40 uppercase tracking-widest">Creator Node</span>
+                        <span className="text-xs text-white/60">YouTube</span>
                       </div>
                     </div>
                   </div>
@@ -204,11 +200,11 @@ export function InfluencerNetwork() {
 
                 <div className="grid grid-cols-2 gap-8 pt-8 border-t border-white/5">
                   <div className="space-y-1">
-                    <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Aggregate Reach</p>
+                    <p className="text-xs font-medium text-white/60">Reach</p>
                     <p className="text-3xl font-black text-white tracking-tighter">{influencer.subs}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Total Videos</p>
+                    <p className="text-xs font-medium text-white/60">Total videos</p>
                     <p className="text-sm font-medium text-white/70 leading-tight">{influencer.metric}</p>
                   </div>
                 </div>
@@ -223,17 +219,15 @@ export function InfluencerNetwork() {
         <div className="flex flex-col md:flex-row justify-between items-end gap-12">
           <div className="flex items-baseline gap-8">
             <span className="text-8xl md:text-[12rem] font-black tracking-tighter text-white leading-none">100M+</span>
-            <p className="text-white/40 text-xs font-bold uppercase tracking-[0.4em] mb-4">
-              Managed Reach
-            </p>
+            <p className="text-white/60 text-xs font-medium mb-4">Managed reach</p>
           </div>
           
           <div className="max-w-xs text-right space-y-8">
-            <p className="text-white/60 text-sm font-medium leading-relaxed uppercase">
+            <p className="text-white/60 text-sm font-medium leading-relaxed">
               Consolidated distribution across primary gaming territories. One pipeline, absolute scale.
             </p>
-            <button className="px-12 py-5 border border-white/10 text-white/70 text-[10px] font-black uppercase tracking-[0.4em] hover:bg-white hover:text-black hover:border-white transition-all duration-500">
-              Initiate Distribution Audit
+            <button className="px-10 py-4 border border-white/10 text-white/70 text-sm font-semibold hover:bg-white hover:text-black hover:border-white transition-all duration-500">
+              Request distribution audit
             </button>
           </div>
         </div>

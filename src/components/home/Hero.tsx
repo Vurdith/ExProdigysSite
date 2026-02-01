@@ -3,12 +3,25 @@
 import { motion, useScroll, useTransform, useSpring, useMotionValue, useMotionTemplate } from "framer-motion";
 import { MagneticButton } from "@/components/ui/MagneticButton";
 import { ArtifactCore } from "@/components/ui/ArtifactCore";
+import { SignatureSigil } from "@/components/ui/SignatureSigil";
 import { Canvas } from "@react-three/fiber";
 import Image from "next/image";
-import { useRef, useEffect } from "react";
+import { useRef, useEffect, useState } from "react";
+import { supabase } from "@/lib/supabase";
 
 export function Hero() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const [heroImages, setHeroImages] = useState({
+    left: "/images/hero-1.png",
+    right: "/images/hero-2.png",
+  });
+  const defaultMetrics = [
+    { label: "Games Created", value: "20+" },
+    { label: "Influencer Partners", value: "40+" },
+    { label: "Games Worked With", value: "60+" },
+    { label: "Companies Worked With", value: "50+" },
+  ];
+  const [metrics, setMetrics] = useState(defaultMetrics);
   const { scrollYProgress } = useScroll({
     target: containerRef,
     offset: ["start start", "end start"],
@@ -27,6 +40,87 @@ export function Hero() {
     window.addEventListener("mousemove", handleMouseMove);
     return () => window.removeEventListener("mousemove", handleMouseMove);
   }, [mouseX, mouseY]);
+
+  useEffect(() => {
+    const loadMetrics = async () => {
+      try {
+        const keys = [
+          "hero_metric_1_label",
+          "hero_metric_1_value",
+          "hero_metric_2_label",
+          "hero_metric_2_value",
+          "hero_metric_3_label",
+          "hero_metric_3_value",
+          "hero_metric_4_label",
+          "hero_metric_4_value",
+        ];
+        const { data, error } = await supabase
+          .from("site_content")
+          .select("key, value")
+          .in("key", keys);
+        if (error || !data) return;
+
+        const map = new Map<string, string>(data.map((row: any) => [row.key, row.value]));
+        const next = [
+          {
+            label: map.get("hero_metric_1_label") || defaultMetrics[0].label,
+            value: map.get("hero_metric_1_value") || defaultMetrics[0].value,
+          },
+          {
+            label: map.get("hero_metric_2_label") || defaultMetrics[1].label,
+            value: map.get("hero_metric_2_value") || defaultMetrics[1].value,
+          },
+          {
+            label: map.get("hero_metric_3_label") || defaultMetrics[2].label,
+            value: map.get("hero_metric_3_value") || defaultMetrics[2].value,
+          },
+          {
+            label: map.get("hero_metric_4_label") || defaultMetrics[3].label,
+            value: map.get("hero_metric_4_value") || defaultMetrics[3].value,
+          },
+        ];
+        setMetrics(next);
+      } catch {
+        // keep defaults
+      }
+    };
+
+    loadMetrics();
+  }, []);
+
+  useEffect(() => {
+    const loadHeroThumbnails = async () => {
+      const urls = [
+        "https://www.roblox.com/games/17316900493/Anime-Simulator",
+        "https://www.roblox.com/games/125719459715611/Anime-Chefs",
+      ];
+
+      try {
+        const [first, second] = await Promise.all(
+          urls.map(async (url) => {
+            const response = await fetch("/api/roblox", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ url }),
+            });
+
+            if (!response.ok) return null;
+            const data = await response.json();
+            return data?.imageUrl || null;
+          })
+        );
+
+        setHeroImages((prev) => ({
+          left: first || prev.left,
+          right: second || prev.right,
+        }));
+      } catch {
+        // keep defaults
+      }
+    };
+
+    loadHeroThumbnails();
+  }, []);
 
   const springScroll = useSpring(scrollYProgress, { stiffness: 100, damping: 30 });
 
@@ -75,7 +169,7 @@ export function Hero() {
             transition={{ repeat: Infinity, duration: 10, ease: "easeInOut" }}
             className="absolute left-[35%] top-[40%] w-[600px] h-[400px] rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_100px_rgba(0,240,255,0.1)]"
           >
-            <Image src="/images/hero-1.png" alt="Showcase 1" fill className="object-cover opacity-40 grayscale hover:grayscale-0 transition-all duration-1000" />
+            <Image src={heroImages.left} alt="Anime Simulator" fill className="object-cover opacity-40 grayscale hover:grayscale-0 transition-all duration-1000" />
           </motion.div>
 
           <motion.div 
@@ -83,7 +177,7 @@ export function Hero() {
             transition={{ repeat: Infinity, duration: 12, ease: "easeInOut" }}
             className="absolute right-[35%] top-[45%] w-[500px] h-[350px] rounded-2xl overflow-hidden border border-white/10 shadow-[0_0_100px_rgba(112,0,255,0.1)]"
           >
-            <Image src="/images/hero-2.png" alt="Showcase 2" fill className="object-cover opacity-30 grayscale hover:grayscale-0 transition-all duration-1000" />
+            <Image src={heroImages.right} alt="Anime Chefs" fill className="object-cover opacity-30 grayscale hover:grayscale-0 transition-all duration-1000" />
           </motion.div>
         </motion.div>
       </div>
@@ -99,21 +193,15 @@ export function Hero() {
 
       {/* 4. Hero Content - Floating Above Stage */}
       <div className="relative z-50 pt-[25vh] container mx-auto px-6 max-w-6xl pointer-events-none">
+        <div className="pointer-events-none absolute right-4 top-10 hidden lg:block">
+          <div className="w-[240px] h-[240px] opacity-70">
+            <SignatureSigil />
+          </div>
+        </div>
         <div className="flex flex-col items-center text-center">
-          {/* Technical Label */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            className="mb-12 flex items-center gap-4 text-[10px] font-bold uppercase tracking-[0.5em] text-white"
-          >
-            <div className="w-12 h-[1px] bg-white/30" />
-            <span>Burgundy Ventures Structural Systems</span>
-            <div className="w-12 h-[1px] bg-white/30" />
-          </motion.div>
-
           {/* Headline - Kinetic Reveal */}
           <motion.div style={{ y: textY, opacity }} className="mb-16">
-            <h1 className="text-7xl md:text-9xl font-bold tracking-tighter leading-[0.9] text-white">
+            <h1 className="text-6xl md:text-8xl font-bold tracking-tighter leading-[0.92] text-white">
               <span className="block overflow-hidden">
                 <motion.span
                   initial={{ y: "100%" }}
@@ -121,7 +209,7 @@ export function Hero() {
                   transition={{ duration: 1.2, ease: [0.33, 1, 0.68, 1] }}
                   className="block"
                 >
-                  Architecting
+                  Roblox Brands
                 </motion.span>
               </span>
                      <span className="block overflow-hidden -mt-2">
@@ -131,7 +219,7 @@ export function Hero() {
                          transition={{ delay: 0.2, duration: 1.2, ease: [0.33, 1, 0.68, 1] }}
                          className="block text-white/60 italic font-light"
                        >
-                         The Impossible.
+                         Brought to Life.
                        </motion.span>
                      </span>
             </h1>
@@ -142,10 +230,10 @@ export function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.6, duration: 1 }}
-            className="text-lg md:text-xl text-white/70 max-w-2xl mb-12 leading-relaxed font-medium"
+            className="text-lg md:text-xl text-white/70 max-w-2xl mb-10 leading-relaxed font-medium"
           >
-            We build high-fidelity virtual worlds for brands ready to lead the metaverse. 
-            Remove technical friction and start growing your digital presence today.
+            Bespoke experiences, trailers, and integrations that make Roblox audiences convert.
+            Strategy to launch, one tight pipeline.
           </motion.p>
 
           {/* Interactive CTAs - Action Oriented + Risk Reversal */}
@@ -155,17 +243,27 @@ export function Hero() {
             transition={{ delay: 0.8 }}
             className="flex flex-col items-center gap-8 pointer-events-auto"
           >
-            <div className="flex flex-col sm:flex-row items-center gap-12">
-              <MagneticButton className="bg-white text-black px-16 py-6 text-[10px] font-black uppercase tracking-[0.4em] rounded-none hover:bg-neon-blue transition-all duration-500">
-                Book Your Strategy Session
+            <div className="flex flex-col sm:flex-row items-center gap-10">
+              <MagneticButton className="bg-white text-black px-14 py-5 text-[10px] font-black uppercase tracking-[0.4em] rounded-none hover:bg-neon-blue transition-all duration-500">
+                Book a Call
               </MagneticButton>
               
-              <button className="group relative text-white/70 hover:text-white font-bold tracking-[0.4em] uppercase text-[10px] transition-colors">
-                <span>View Results Guide</span>
+              <a href="#work" className="group relative text-white/70 hover:text-white font-bold tracking-[0.4em] uppercase text-[10px] transition-colors">
+                <span>View Full Reel</span>
                 <motion.div 
                   className="absolute -bottom-4 left-0 w-0 h-[1px] bg-white opacity-40 group-hover:w-full transition-all duration-500"
                 />
-              </button>
+              </a>
+            </div>
+            <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-6 text-left">
+              {metrics.map((item) => (
+                <div key={`${item.label}-${item.value}`} className="border border-white/10 bg-white/[0.02] bg-gradient-to-br from-white/[0.06] via-transparent to-transparent px-4 py-4">
+                  <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-white/50 mb-2">
+                    {item.label}
+                  </p>
+                  <p className="text-2xl font-black text-white">{item.value}</p>
+                </div>
+              ))}
             </div>
           </motion.div>
 

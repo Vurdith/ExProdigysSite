@@ -156,8 +156,6 @@ export default function AdminLayout({
                 <Globe className="w-3 h-3" />
                 Public Site
               </Link>
-              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse" />
-              <span className="text-[9px] font-bold uppercase tracking-widest text-white/40">System Online</span>
             </div>
           </header>
           <div className="p-6 md:p-12">

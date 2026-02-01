@@ -66,13 +66,16 @@ export function FeaturedGames() {
 
   return (
     <section id="work" className="relative py-32 bg-void overflow-hidden">
-      <div className="container mx-auto px-6 max-w-6xl mb-24">
-        <span className="text-white/60 text-[10px] font-bold uppercase tracking-[0.4em] mb-8 block">
-          The Portfolio
+      <div className="container mx-auto px-6 max-w-6xl mb-20">
+        <span className="text-white/60 text-[10px] font-bold uppercase tracking-[0.4em] mb-6 block">
+          Selected Work
         </span>
         <h2 className="text-5xl md:text-7xl font-bold tracking-tight leading-[0.9]">
-          The <span className="text-white/40 italic font-light">Artifacts.</span>
+          Proof in <span className="text-white/40 italic font-light">Production.</span>
         </h2>
+        <p className="text-white/60 mt-6 max-w-2xl">
+          One headline metric, one sentence, and a result-driven outcome for every artifact.
+        </p>
       </div>
 
       {/* Seamless Marquee Container */}
@@ -108,8 +111,8 @@ export function FeaturedGames() {
 
                 {/* Content */}
                 <div className="absolute inset-0 z-20 flex flex-col justify-end p-12">
-          <div className="bg-void/85 bg-gradient-to-br from-white/[0.06] via-transparent to-transparent border border-white/10 p-6 max-w-sm">
-                    <span className="text-white/80 text-[10px] font-bold uppercase tracking-[0.3em] mb-3 block">
+                  <div className="bg-white/[0.06] bg-gradient-to-br from-white/[0.16] via-white/[0.04] to-transparent border border-white/15 p-6 max-w-sm">
+                    <span className="text-neon-blue text-[11px] font-semibold tracking-wide mb-3 block">
                       {game.stats || "Current: N/A"}
                     </span>
                     <h3 className="text-4xl font-bold tracking-tight mb-4 text-white line-clamp-2 max-h-[4.5rem] overflow-hidden">
@@ -118,7 +121,11 @@ export function FeaturedGames() {
                     <p className="text-white/85 text-sm leading-relaxed mb-6 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-4 group-hover:translate-y-0 whitespace-normal line-clamp-3 max-h-[4.5rem] overflow-hidden">
                       {game.description}
                     </p>
-                    <div className="w-12 h-[1px] bg-white/40 transition-all duration-500 group-hover:w-full" />
+                    <div className="flex items-center justify-between text-xs font-semibold text-white/70">
+                      <span>Outcome</span>
+                      <span className="text-white/50">View case study</span>
+                    </div>
+                    <div className="w-12 h-[1px] bg-white/40 transition-all duration-500 group-hover:w-full mt-4" />
                   </div>
                 </div>
 

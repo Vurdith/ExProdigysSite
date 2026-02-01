@@ -19,6 +19,7 @@ interface Influencer {
 
 export default function InfluencersAdmin() {
   const [influencers, setInfluencers] = useState<Influencer[]>([]);
+  const [failedAvatars, setFailedAvatars] = useState<Record<string, boolean>>({});
   const [loading, setLoading] = useState(true);
   const [isEditing, setIsEditing] = useState<string | null>(null);
   const [formData, setFormData] = useState<Partial<Influencer>>({});
@@ -399,8 +400,17 @@ export default function InfluencersAdmin() {
           <GlassCard key={influencer.id} className={`p-6 border-white/10 bg-white/[0.02] hover:border-white/20 transition-all ${isEditing === influencer.id ? "opacity-30 pointer-events-none" : ""}`}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-8">
-                {influencer.avatar_url ? (
-                  <img src={influencer.avatar_url} alt={influencer.name} className="w-14 h-14 rounded-full border border-white/10" />
+                {influencer.avatar_url && !failedAvatars[influencer.id] ? (
+                  <img
+                    src={influencer.avatar_url}
+                    alt={influencer.name}
+                    className="w-14 h-14 rounded-full border border-white/10"
+                    referrerPolicy="no-referrer"
+                    crossOrigin="anonymous"
+                    onError={() => {
+                      setFailedAvatars((prev) => ({ ...prev, [influencer.id]: true }));
+                    }}
+                  />
                 ) : (
                   <div className="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center text-xl font-black text-white/20">
                     {influencer.name[0]}
