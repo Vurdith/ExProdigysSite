@@ -57,3 +57,16 @@ model SiteContent {
 
   @@map("site_content")
 }
+
+model Lead {
+  id           String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email        String   @unique
+  name         String
+  company      String?
+  status       String?
+  source       String?
+  abandoned_at DateTime? @db.Timestamptz
+  created_at   DateTime @default(now()) @db.Timestamptz
+
+  @@map("leads")
+}

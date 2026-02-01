@@ -64,12 +64,7 @@ export function ScheduleMeetingFAB() {
                 </p>
               </div>
 
-              <LeadForm 
-                onComplete={() => {
-                  // Redirect to scheduling tool or success state
-                  setTimeout(() => setIsOpen(false), 3000);
-                }}
-              />
+              <LeadForm onComplete={() => setIsOpen(false)} />
             </GlassCard>
           </motion.div>
         </div>

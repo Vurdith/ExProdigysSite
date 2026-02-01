@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { MagneticButton } from "@/components/ui/MagneticButton";
-import { supabase } from "@/lib/supabase";
 import { motion, AnimatePresence } from "framer-motion";
 
 export function LeadForm({
@@ -19,42 +18,57 @@ export function LeadForm({
     company: "",
   });
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleBlur = async () => {
     // Save partial data as "abandoned" lead if we have email
     if (formData.email) {
-      await supabase.from("leads").upsert(
-        {
-          email: formData.email,
-          name: formData.name,
-          company: formData.company,
-          status: "abandoned",
-          abandoned_at: new Date().toISOString(),
-        },
-        { onConflict: "email" }
-      );
+      try {
+        await fetch("/api/leads", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            email: formData.email,
+            name: formData.name,
+            company: formData.company,
+            status: "abandoned",
+            abandoned_at: new Date().toISOString(),
+          }),
+        });
+      } catch {
+        // best-effort only
+      }
     }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (loading) return;
     setLoading(true);
+    setErrorMessage(null);
 
-    const { error } = await supabase.from("leads").upsert(
-      {
+    const response = await fetch("/api/leads", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
         email: formData.email,
         name: formData.name,
         company: formData.company,
         status: "new",
         source: "website_form",
-        abandoned_at: null, // Clear abandoned status
-      },
-      { onConflict: "email" }
-    );
+        abandoned_at: null,
+      }),
+    });
+    const result = await response.json().catch(() => ({}));
 
     setLoading(false);
 
-    if (!error) {
+    if (!response.ok || result?.error) {
+      setErrorMessage(result?.error || "Submission failed. Please try again.");
+      return;
+    }
+
+    {
       try {
         await fetch("/api/lead", {
           method: "POST",
@@ -109,6 +123,11 @@ export function LeadForm({
             exit={{ opacity: 0, x: 20 }}
             className="space-y-4 relative z-10"
           >
+            {errorMessage && (
+              <div className="border border-red-500/20 bg-red-500/10 text-red-300 text-xs font-semibold px-4 py-3 rounded-2xl">
+                {errorMessage}
+              </div>
+            )}
             <div>
               <label className="block text-xs font-medium text-white/60 mb-2">
                 Name
@@ -160,6 +179,7 @@ export function LeadForm({
               className="w-full bg-white text-black"
               variant="primary"
               type="submit"
+              disabled={loading}
             >
               {loading ? "Submitting..." : compact ? "Get Report" : "Complete Request"}
             </MagneticButton>
