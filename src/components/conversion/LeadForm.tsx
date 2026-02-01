@@ -55,6 +55,19 @@ export function LeadForm({
     setLoading(false);
 
     if (!error) {
+      try {
+        await fetch("/api/lead", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            name: formData.name,
+            email: formData.email,
+            company: formData.company,
+          }),
+        });
+      } catch {
+        // Email notification is best-effort only
+      }
       if (onComplete) onComplete();
       else setStep(3); // Success state
     }

@@ -199,7 +199,10 @@ export function MarketStats() {
                   </span>
                 ))}
               </div>
-              <button className="inline-flex items-center justify-center rounded-full bg-white text-black px-7 py-3.5 text-sm font-semibold shadow-[0_20px_50px_rgba(255,255,255,0.2)] hover:bg-neon-blue hover:text-black transition-colors">
+              <button
+                onClick={() => window.dispatchEvent(new Event("open-schedule-modal"))}
+                className="inline-flex items-center justify-center rounded-full bg-white text-black px-7 py-3.5 text-sm font-semibold shadow-[0_20px_50px_rgba(255,255,255,0.2)] hover:bg-neon-blue hover:text-black transition-colors"
+              >
                 Be the next brand
               </button>
             </div>

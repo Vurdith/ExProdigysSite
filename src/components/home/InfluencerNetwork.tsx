@@ -226,7 +226,10 @@ export function InfluencerNetwork() {
             <p className="text-white/60 text-sm font-medium leading-relaxed">
               Consolidated distribution across primary gaming territories. One pipeline, absolute scale.
             </p>
-            <button className="px-10 py-4 border border-white/10 text-white/70 text-sm font-semibold hover:bg-white hover:text-black hover:border-white transition-all duration-500">
+            <button
+              onClick={() => window.dispatchEvent(new Event("open-schedule-modal"))}
+              className="px-10 py-4 border border-white/10 text-white/70 text-sm font-semibold hover:bg-white hover:text-black hover:border-white transition-all duration-500"
+            >
               Request distribution audit
             </button>
           </div>

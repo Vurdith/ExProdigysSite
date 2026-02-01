@@ -48,10 +48,10 @@ export function Navbar() {
 
       <div className="flex items-center gap-12">
         <Link 
-          href="#contact" 
+          href="#work" 
           className="hidden lg:block text-[10px] font-bold uppercase tracking-[0.4em] text-white/40 hover:text-white transition-colors"
         >
-          Contact
+          Results
         </Link>
         <MagneticButton className="bg-white text-black px-10 py-3.5 text-[10px] font-bold uppercase tracking-[0.3em] rounded-none">
           Get Started

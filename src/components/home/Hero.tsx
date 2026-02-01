@@ -15,6 +15,11 @@ export function Hero() {
     left: "/images/hero-1.png",
     right: "/images/hero-2.png",
   });
+  const openScheduleModal = () => {
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new Event("open-schedule-modal"));
+    }
+  };
   const defaultMetrics = [
     { label: "Games Created", value: "20+" },
     { label: "Influencer Partners", value: "40+" },
@@ -244,8 +249,11 @@ export function Hero() {
             className="flex flex-col items-center gap-8 pointer-events-auto"
           >
             <div className="flex flex-col sm:flex-row items-center gap-10">
-              <MagneticButton className="bg-white text-black px-14 py-5 text-[10px] font-black uppercase tracking-[0.4em] rounded-none hover:bg-neon-blue transition-all duration-500">
-                Book a Call
+              <MagneticButton
+                className="bg-white text-black px-14 py-5 text-[10px] font-black uppercase tracking-[0.4em] rounded-none hover:bg-neon-blue transition-all duration-500"
+                onClick={openScheduleModal}
+              >
+                Start a Project
               </MagneticButton>
               
               <a href="#work" className="group relative text-white/70 hover:text-white font-bold tracking-[0.4em] uppercase text-[10px] transition-colors">

@@ -2,13 +2,19 @@
 
 import { motion } from "framer-motion";
 import { Calendar } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { LeadForm } from "@/components/conversion/LeadForm";
 import { GlassCard } from "./GlassCard";
 import { X } from "lucide-react";
 
 export function ScheduleMeetingFAB() {
   const [isOpen, setIsOpen] = useState(false);
+
+  useEffect(() => {
+    const openHandler = () => setIsOpen(true);
+    window.addEventListener("open-schedule-modal", openHandler);
+    return () => window.removeEventListener("open-schedule-modal", openHandler);
+  }, []);
 
   return (
     <>
