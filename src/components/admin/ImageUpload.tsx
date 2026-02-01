@@ -48,7 +48,7 @@ export function ImageUpload({ onUpload, currentUrl, bucket = "site-assets" }: Im
 
   return (
     <div className="space-y-4">
-      <div className="relative aspect-video w-full rounded-lg border border-white/10 bg-white/5 overflow-hidden flex items-center justify-center group">
+      <div className="relative aspect-video w-full rounded-2xl border border-white/10 bg-white/5 overflow-hidden flex items-center justify-center group ring-1 ring-white/5">
         {preview ? (
           <>
             <img src={preview} alt="Preview" className="w-full h-full object-cover" />

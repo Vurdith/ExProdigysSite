@@ -70,7 +70,25 @@ export function LeadForm({
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form
+      onSubmit={handleSubmit}
+      className="relative overflow-hidden space-y-6 border border-white/10 bg-white/[0.03] bg-gradient-to-br from-white/[0.08] via-white/[0.02] to-transparent rounded-3xl p-8 ring-1 ring-white/5 shadow-[0_0_80px_rgba(88,101,242,0.12)]"
+    >
+      <div className="pointer-events-none absolute -inset-8 rounded-[32px] border border-white/10 bg-gradient-to-br from-white/[0.08] via-transparent to-transparent rotate-1" />
+      <div className="pointer-events-none absolute inset-3 rounded-3xl border border-white/10" />
+      <div className="pointer-events-none absolute right-6 top-6 h-20 w-20 rounded-full bg-gradient-to-br from-neon-purple/30 via-neon-purple/10 to-transparent opacity-80" />
+      <div className="pointer-events-none absolute left-10 bottom-6 h-16 w-40 rounded-full border border-white/10 bg-white/[0.02]" />
+      {!compact && (
+        <div className="space-y-2 relative z-10">
+          <span className="text-white/60 text-[10px] font-bold uppercase tracking-[0.4em] block">
+            Strategy Intake
+          </span>
+          <h3 className="text-2xl font-bold text-white">Start your build.</h3>
+          <p className="text-white/60 text-sm">
+            Share your basics and we will respond with a tailored next step.
+          </p>
+        </div>
+      )}
       <AnimatePresence mode="wait">
         {step === 1 && (
           <motion.div
@@ -78,16 +96,16 @@ export function LeadForm({
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 20 }}
-            className="space-y-4"
+            className="space-y-4 relative z-10"
           >
             <div>
-              <label className="block text-sm font-medium text-white/60 mb-1">
+              <label className="block text-[10px] font-bold uppercase tracking-widest text-white/50 mb-2">
                 Name
               </label>
               <input
                 type="text"
                 required
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-blue transition-colors"
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/40 focus:outline-none focus:border-neon-blue/80 focus:ring-1 focus:ring-neon-blue/50 transition-colors"
                 placeholder="John Doe"
                 value={formData.name}
                 onChange={(e) =>
@@ -97,13 +115,13 @@ export function LeadForm({
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-white/60 mb-1">
+              <label className="block text-[10px] font-bold uppercase tracking-widest text-white/50 mb-2">
                 Email
               </label>
               <input
                 type="email"
                 required
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-blue transition-colors"
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/40 focus:outline-none focus:border-neon-blue/80 focus:ring-1 focus:ring-neon-blue/50 transition-colors"
                 placeholder="john@company.com"
                 value={formData.email}
                 onChange={(e) =>
@@ -139,15 +157,15 @@ export function LeadForm({
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: 20 }}
-            className="space-y-4"
+            className="space-y-4 relative z-10"
           >
             <div>
-              <label className="block text-sm font-medium text-white/60 mb-1">
+              <label className="block text-[10px] font-bold uppercase tracking-widest text-white/50 mb-2">
                 Company (Optional)
               </label>
               <input
                 type="text"
-                className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white focus:outline-none focus:border-neon-blue transition-colors"
+                className="w-full bg-white/5 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/40 focus:outline-none focus:border-neon-blue/80 focus:ring-1 focus:ring-neon-blue/50 transition-colors"
                 placeholder="Acme Inc."
                 value={formData.company}
                 onChange={(e) =>

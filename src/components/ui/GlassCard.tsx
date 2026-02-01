@@ -59,7 +59,7 @@ export function GlassCard({
     <motion.div
       ref={cardRef}
       className={cn(
-        "group relative overflow-hidden rounded-3xl border border-white/5 bg-white/[0.02] backdrop-blur-2xl",
+        "group relative overflow-hidden rounded-3xl border border-white/5 bg-white/[0.02] bg-gradient-to-br from-white/[0.06] via-white/[0.02] to-transparent",
         "transition-colors duration-500 perspective-2000",
         hoverEffect && "hover:border-white/10 hover:bg-white/[0.04]",
         className

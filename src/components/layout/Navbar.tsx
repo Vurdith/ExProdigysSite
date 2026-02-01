@@ -22,7 +22,7 @@ export function Navbar() {
       transition={{ duration: 0.8, ease: [0.33, 1, 0.68, 1] }}
       className={cn(
         "fixed top-0 left-0 right-0 z-[100] flex items-center justify-between px-8 md:px-16 transition-all duration-500",
-        scrolled ? "py-6 bg-black/40 backdrop-blur-2xl border-b border-white/5" : "py-10 bg-transparent"
+        scrolled ? "py-6 bg-gradient-to-b from-black/80 via-black/60 to-black/30 border-b border-white/5" : "py-10 bg-transparent"
       )}
     >
       <Link href="/" className="group flex items-center gap-4">

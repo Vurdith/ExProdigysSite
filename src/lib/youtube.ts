@@ -4,6 +4,8 @@ export interface YouTubeChannelData {
   description: string;
   customUrl: string;
   subscriberCount: string;
+  viewCount: string;
+  videoCount: string;
   avatarUrl: string;
 }
 
@@ -23,7 +25,7 @@ export async function getChannelData(urlOrHandle: string): Promise<YouTubeChanne
     const html = await response.text();
     
     // Extract ytInitialData JSON
-    const dataMatch = html.match(/var ytInitialData = ({.*?});<\/script>/s);
+    const dataMatch = html.match(/var ytInitialData = ({[\s\S]*?});<\/script>/);
     if (!dataMatch) return null;
 
     const json = JSON.parse(dataMatch[1]);
@@ -58,25 +60,138 @@ export async function getChannelData(urlOrHandle: string): Promise<YouTubeChanne
 
     // Subscriber Count
     let subscriberCount = "N/A";
-    
-    // Support for multiple YouTube UI versions
-    const subCountText = 
-      header.subscriberCountText?.simpleText || 
-      header.metadata?.contentMetadataViewModel?.metadataRows?.[0]?.metadataParts?.[0]?.text?.content ||
-      "";
 
-    if (subCountText) {
-      subscriberCount = subCountText.split(" ")[0];
-    } else if (pageHeader?.metadata?.contentMetadataViewModel?.metadataRows) {
-        // Nested check for newer UI
-        const rows = pageHeader.metadata.contentMetadataViewModel.metadataRows;
-        for (const row of rows) {
-            const text = row.metadataParts?.[0]?.text?.content || "";
-            if (text.toLowerCase().includes("subscribers")) {
-                subscriberCount = text.split(" ")[0];
-                break;
-            }
+    const candidateTexts: string[] = [];
+    const headerSubText = header.subscriberCountText?.simpleText;
+    if (headerSubText) candidateTexts.push(headerSubText);
+    const headerSubRuns = header.subscriberCountText?.runs?.map((r: any) => r.text).join("");
+    if (headerSubRuns) candidateTexts.push(headerSubRuns);
+    const headerSubLabel = header.subscriberCountText?.accessibility?.accessibilityData?.label;
+    if (headerSubLabel) candidateTexts.push(headerSubLabel);
+
+    const headerRows = header.metadata?.contentMetadataViewModel?.metadataRows || [];
+    for (const row of headerRows) {
+      const parts = row.metadataParts || [];
+      for (const part of parts) {
+        const text = part.text?.content;
+        if (text && text.toLowerCase().includes("subscriber")) {
+          candidateTexts.push(text);
         }
+      }
+    }
+
+    const pageRows = pageHeader?.metadata?.contentMetadataViewModel?.metadataRows || [];
+    for (const row of pageRows) {
+      const parts = row.metadataParts || [];
+      for (const part of parts) {
+        const text = part.text?.content;
+        if (text && text.toLowerCase().includes("subscriber")) {
+          candidateTexts.push(text);
+        }
+      }
+    }
+
+    const bestSubscriber = pickLargestCount(candidateTexts, normalizeSubscriberText);
+    if (bestSubscriber) subscriberCount = bestSubscriber;
+
+    // View Count
+    let viewCount = "N/A";
+    const viewCandidateTexts: string[] = [];
+
+    const viewText = header.viewCountText?.simpleText;
+    if (viewText) viewCandidateTexts.push(viewText);
+    const viewRuns = header.viewCountText?.runs?.map((r: any) => r.text).join("");
+    if (viewRuns) viewCandidateTexts.push(viewRuns);
+    const viewLabel = header.viewCountText?.accessibility?.accessibilityData?.label;
+    if (viewLabel) viewCandidateTexts.push(viewLabel);
+
+    for (const row of headerRows) {
+      const parts = row.metadataParts || [];
+      for (const part of parts) {
+        const text = part.text?.content;
+        if (text && text.toLowerCase().includes("views")) {
+          viewCandidateTexts.push(text);
+        }
+      }
+    }
+
+    for (const row of pageRows) {
+      const parts = row.metadataParts || [];
+      for (const part of parts) {
+        const text = part.text?.content;
+        if (text && text.toLowerCase().includes("views")) {
+          viewCandidateTexts.push(text);
+        }
+      }
+    }
+
+    // Fallback to microformat / channel metadata if present
+    const micro = json.microformat?.microformatDataRenderer;
+    const microView = micro?.viewCount;
+    if (microView) viewCandidateTexts.push(`${microView} views`);
+
+    const channelMeta = json.metadata?.channelMetadataRenderer;
+    const metaView = channelMeta?.viewCount;
+    if (metaView) viewCandidateTexts.push(`${metaView} views`);
+
+    // About tab metadata (newer layouts)
+    const aboutViewText = findFirstTextContaining(
+      json,
+      (value) => value.includes("views") && /\d/.test(value),
+      6
+    );
+    if (aboutViewText) viewCandidateTexts.push(aboutViewText);
+
+    for (const text of viewCandidateTexts) {
+      const normalized = normalizeViewCountText(text);
+      if (normalized) {
+        viewCount = normalized;
+        break;
+      }
+    }
+
+    // Video Count
+    let videoCount = "N/A";
+    const videoCandidateTexts: string[] = [];
+
+    const videoText = header.videosCountText?.simpleText;
+    if (videoText) videoCandidateTexts.push(videoText);
+    const videoRuns = header.videosCountText?.runs?.map((r: any) => r.text).join("");
+    if (videoRuns) videoCandidateTexts.push(videoRuns);
+
+    for (const row of headerRows) {
+      const parts = row.metadataParts || [];
+      for (const part of parts) {
+        const text = part.text?.content;
+        if (text && text.toLowerCase().includes("videos")) {
+          videoCandidateTexts.push(text);
+        }
+      }
+    }
+
+    for (const row of pageRows) {
+      const parts = row.metadataParts || [];
+      for (const part of parts) {
+        const text = part.text?.content;
+        if (text && text.toLowerCase().includes("videos")) {
+          videoCandidateTexts.push(text);
+        }
+      }
+    }
+
+    const aboutVideoText = findFirstTextContaining(
+      json,
+      (value) => value.includes("videos") && /\d/.test(value),
+      6
+    );
+    if (aboutVideoText) videoCandidateTexts.push(aboutVideoText);
+
+    for (const text of videoCandidateTexts) {
+      const normalized = normalizeViewCountText(text);
+      if (normalized) {
+        videoCount = normalized;
+        break;
+      }
     }
 
     return {
@@ -85,6 +200,8 @@ export async function getChannelData(urlOrHandle: string): Promise<YouTubeChanne
       description,
       customUrl: metadata.ownerUrls?.[0] || fullUrl,
       subscriberCount,
+      viewCount,
+      videoCount,
       avatarUrl,
     };
   } catch (error) {
@@ -101,4 +218,111 @@ function buildYouTubeUrl(input: string): string {
   
   // Default to handle if no protocol and no @
   return `https://www.youtube.com/@${cleanInput}`;
+}
+
+function normalizeSubscriberText(text: string): string | null {
+  const cleaned = text.trim();
+  if (!cleaned) return null;
+
+  const lower = cleaned.toLowerCase();
+  if (lower.includes("hidden")) return "Hidden";
+
+  // Prefer the first numeric token and optional suffix (K/M/B/T)
+  const match = cleaned.match(/([\d.,]+)\s*([KMBT])?/i);
+  if (match) {
+    const number = match[1];
+    const suffix = match[2] || "";
+    return `${number}${suffix}+`.trim();
+  }
+
+  return null;
+}
+
+function normalizeViewCountText(text: string): string | null {
+  const cleaned = text.trim();
+  if (!cleaned) return null;
+
+  const match = cleaned.match(/([\d.,]+)\s*([KMBT])?/i);
+  if (match) {
+    const number = match[1];
+    const suffix = match[2] || "";
+    return `${number}${suffix}+`.trim();
+  }
+
+  return null;
+}
+
+function pickLargestCount(
+  texts: string[],
+  normalizer: (text: string) => string | null
+): string | null {
+  let bestValue = 0;
+  let bestText: string | null = null;
+
+  for (const text of texts) {
+    const normalized = normalizer(text);
+    if (!normalized) continue;
+    const numeric = countToNumber(normalized);
+    if (numeric > bestValue) {
+      bestValue = numeric;
+      bestText = normalized;
+    }
+  }
+
+  return bestText;
+}
+
+function countToNumber(text: string): number {
+  const match = text.match(/([\d.,]+)\s*([KMBT])?/i);
+  if (!match) return 0;
+  const raw = match[1].replace(/,/g, "");
+  const suffix = (match[2] || "").toUpperCase();
+  const base = parseFloat(raw);
+  if (Number.isNaN(base)) return 0;
+  switch (suffix) {
+    case "K":
+      return base * 1_000;
+    case "M":
+      return base * 1_000_000;
+    case "B":
+      return base * 1_000_000_000;
+    case "T":
+      return base * 1_000_000_000_000;
+    default:
+      return base;
+  }
+}
+
+function findFirstTextContaining(
+  input: any,
+  predicate: (value: string) => boolean,
+  maxDepth = 6
+): string | null {
+  const seen = new Set<any>();
+  const stack: Array<{ value: any; depth: number }> = [{ value: input, depth: 0 }];
+
+  while (stack.length) {
+    const { value, depth } = stack.pop()!;
+    if (value && typeof value === "object") {
+      if (seen.has(value) || depth > maxDepth) continue;
+      seen.add(value);
+
+      if (Array.isArray(value)) {
+        for (const item of value) {
+          stack.push({ value: item, depth: depth + 1 });
+        }
+      } else {
+        for (const key of Object.keys(value)) {
+          stack.push({ value: value[key], depth: depth + 1 });
+        }
+      }
+    } else if (typeof value === "string") {
+      const normalized = value.toLowerCase();
+      if (predicate(normalized)) {
+        return value;
+      }
+    }
+  }
+
+  return null;
 }

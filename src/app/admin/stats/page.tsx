@@ -102,6 +102,9 @@ export default function StatsAdmin() {
     <div className="space-y-12">
       <div className="flex justify-between items-end">
         <div className="max-w-2xl">
+          <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/50 block mb-4">
+            Market Intelligence
+          </span>
           <h1 className="text-4xl font-bold tracking-tight mb-4">Market Validation</h1>
           <p className="text-white/60 leading-relaxed">
             Manage the high-impact statistics that validate the Roblox economy. 
@@ -110,7 +113,7 @@ export default function StatsAdmin() {
         </div>
         <MagneticButton
           onClick={handleAddNew}
-          className="bg-white text-black px-8 py-4 text-[10px] font-black uppercase tracking-widest rounded-none"
+          className="bg-white text-black px-8 py-4 text-[10px] font-black uppercase tracking-widest rounded-2xl"
         >
           <Plus className="w-4 h-4 mr-2" />
           Inject New Metric
@@ -129,24 +132,24 @@ export default function StatsAdmin() {
               {stats.filter(s => s.category === category).map((stat) => (
                 <GlassCard 
                   key={stat.id} 
-                  className={stat.is_highlighted ? "border-neon-blue/20 bg-neon-blue/5" : "border-white/5"}
+                  className={stat.is_highlighted ? "border-neon-blue/20 bg-white/[0.03] shadow-[0_0_60px_rgba(88,101,242,0.15)]" : "border-white/10 bg-white/[0.02]"}
                 >
                   {isEditing === stat.id ? (
                     <div className="space-y-4">
                       <input
-                        className="w-full bg-white/5 border border-white/10 rounded px-3 py-2 text-white text-sm"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder:text-white/40 focus:outline-none focus:border-neon-blue/80 focus:ring-1 focus:ring-neon-blue/50"
                         placeholder="Label"
                         value={formData.label || ""}
                         onChange={(e) => setFormData({ ...formData, label: e.target.value })}
                       />
                       <input
-                        className="w-full bg-white/5 border border-white/10 rounded px-3 py-2 text-white text-lg font-bold"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-lg font-bold placeholder:text-white/40 focus:outline-none focus:border-neon-blue/80 focus:ring-1 focus:ring-neon-blue/50"
                         placeholder="Value"
                         value={formData.value || ""}
                         onChange={(e) => setFormData({ ...formData, value: e.target.value })}
                       />
                       <input
-                        className="w-full bg-white/5 border border-white/10 rounded px-3 py-2 text-white text-xs"
+                        className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-xs placeholder:text-white/40 focus:outline-none focus:border-neon-blue/80 focus:ring-1 focus:ring-neon-blue/50"
                         placeholder="Detail"
                         value={formData.detail || ""}
                         onChange={(e) => setFormData({ ...formData, detail: e.target.value })}
@@ -161,8 +164,8 @@ export default function StatsAdmin() {
                           Highlight
                         </label>
                         <div className="flex gap-2">
-                          <button onClick={handleCancel} className="p-2 text-white/40"><X className="w-4 h-4" /></button>
-                          <button onClick={handleSave} className="p-2 text-green-500"><Save className="w-4 h-4" /></button>
+                          <button onClick={handleCancel} className="p-2 text-white/40 hover:text-white transition-colors"><X className="w-4 h-4" /></button>
+                          <button onClick={handleSave} className="p-2 text-green-500 hover:text-green-300 transition-colors"><Save className="w-4 h-4" /></button>
                         </div>
                       </div>
                     </div>
@@ -193,14 +196,14 @@ export default function StatsAdmin() {
                 <GlassCard className="border-dashed border-white/20 bg-white/[0.02]">
                   <div className="space-y-4">
                     <input
-                      className="w-full bg-white/5 border border-white/10 rounded px-3 py-2 text-white text-sm"
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-sm placeholder:text-white/40 focus:outline-none focus:border-neon-blue/80 focus:ring-1 focus:ring-neon-blue/50"
                       placeholder="New Label"
                       autoFocus
                       value={formData.label || ""}
                       onChange={(e) => setFormData({ ...formData, label: e.target.value })}
                     />
                     <input
-                      className="w-full bg-white/5 border border-white/10 rounded px-3 py-2 text-white text-lg font-bold"
+                      className="w-full bg-white/5 border border-white/10 rounded-xl px-3 py-2 text-white text-lg font-bold placeholder:text-white/40 focus:outline-none focus:border-neon-blue/80 focus:ring-1 focus:ring-neon-blue/50"
                       placeholder="Value"
                       value={formData.value || ""}
                       onChange={(e) => setFormData({ ...formData, value: e.target.value })}

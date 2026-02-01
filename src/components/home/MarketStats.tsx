@@ -80,8 +80,9 @@ export function MarketStats() {
   const brands = ["Fashion & Apparel", "Beauty & Cosmetics", "Automotive", "Entertainment", "Food & Beverage", "Retail & Tech"];
 
   return (
-    <section id="stats" className="py-32 relative bg-void overflow-hidden">
-      <div className="container mx-auto px-6 max-w-6xl">
+    <section id="stats" className="py-36 relative bg-void overflow-hidden">
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_top,_rgba(255,255,255,0.05),_transparent_55%)] pointer-events-none" />
+      <div className="container mx-auto px-6 max-w-6xl relative">
         <div className="flex flex-col items-center text-center mb-24">
           <motion.span
             initial={{ opacity: 0, y: 20 }}
@@ -111,7 +112,9 @@ export function MarketStats() {
         </div>
 
         <div className="space-y-32">
-          {categories.map((category) => (
+          {categories.map((category) => {
+            const categoryStats = stats.filter((s) => s.category === category);
+            return (
             <div key={category} className="space-y-12">
               <div className="flex items-center gap-8">
                 <h3 className="text-white/40 font-bold uppercase tracking-[0.3em] text-xs whitespace-nowrap">
@@ -120,22 +123,27 @@ export function MarketStats() {
                 <div className="h-[1px] w-full bg-white/10" />
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                {stats.filter(s => s.category === category).map((item) => {
+              <div className="grid grid-cols-1 md:grid-cols-6 gap-6 auto-rows-[220px]">
+                {categoryStats.map((item, index) => {
                   const Icon = iconMap[item.icon_name] || BarChart3;
+                  const isWide = item.is_highlighted || index % 3 === 0;
+                  const spanClass = isWide ? "md:col-span-3 md:row-span-2" : index % 2 === 0 ? "md:col-span-2" : "md:col-span-3";
+                  const offsetClass = index % 2 === 0 ? "md:translate-y-6" : "md:-translate-y-4";
                   return (
                     <GlassCard 
                       key={item.id} 
-                      className={item.is_highlighted ? "border-neon-blue/20" : ""}
+                      className={`${spanClass} ${offsetClass} ${item.is_highlighted ? "border-neon-blue/20 bg-white/[0.03] shadow-[0_0_80px_rgba(88,101,242,0.15)]" : "border-white/10 bg-white/[0.02]"}`}
                     >
                       <div className="space-y-6">
                         <div className={`w-10 h-10 rounded-full flex items-center justify-center ${item.is_highlighted ? "bg-neon-blue/10 text-neon-blue" : "bg-white/5 text-white/60"}`}>
                           <Icon className="w-5 h-5" />
                         </div>
                         <div>
-                          <p className="text-white/60 text-[10px] font-bold uppercase tracking-widest mb-2">{item.label}</p>
-                          <h4 className="text-4xl font-bold text-white mb-2">{item.value}</h4>
-                          <p className="text-white/40 text-xs font-medium">{item.detail}</p>
+                          <p className="text-white/60 text-[10px] font-bold uppercase tracking-[0.4em] mb-2">{item.label}</p>
+                          <h4 className={`text-5xl font-bold mb-3 tracking-tight ${item.is_highlighted ? "text-white drop-shadow-[0_20px_40px_rgba(88,101,242,0.35)]" : "text-white/90"}`}>
+                            {item.value}
+                          </h4>
+                          <p className="text-white/60 text-xs font-medium">{item.detail}</p>
                         </div>
                       </div>
                     </GlassCard>
@@ -143,7 +151,8 @@ export function MarketStats() {
                 })}
               </div>
             </div>
-          ))}
+          );
+          })}
         </div>
 
         {/* Brand Ecosystem */}
@@ -162,14 +171,14 @@ export function MarketStats() {
               </p>
               <div className="flex flex-wrap gap-4">
                 {brands.map((brand) => (
-                  <span key={brand} className="px-4 py-2 border border-white/10 rounded-full text-[10px] font-bold uppercase tracking-widest text-white/60">
+                  <span key={brand} className="px-4 py-2 border border-white/10 rounded-full text-[10px] font-bold uppercase tracking-widest text-white/60 bg-white/[0.02]">
                     {brand}
                   </span>
                 ))}
               </div>
             </div>
             
-            <GlassCard className="p-12 relative overflow-hidden">
+            <GlassCard className="p-12 relative overflow-hidden border-white/10 bg-white/[0.03]">
               <div className="relative z-10 space-y-8">
                 <div className="flex items-center justify-between">
                   <span className="text-white/40 font-bold uppercase tracking-widest text-[10px]">The Attention Economy</span>

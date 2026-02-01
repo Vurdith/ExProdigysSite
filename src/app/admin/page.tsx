@@ -15,7 +15,12 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-12">
       <div className="max-w-2xl">
-        <h1 className="text-4xl font-bold tracking-tight mb-4">Command Center</h1>
+        <span className="text-[10px] font-bold uppercase tracking-[0.4em] text-white/50 block mb-4">
+          Admin Overview
+        </span>
+        <h1 className="text-4xl font-bold tracking-tight mb-4">
+          Command Center
+        </h1>
         <p className="text-white/60 leading-relaxed">
           Manage your digital artifacts, influencer nodes, and market validation data in real-time. 
           Changes made here will reflect instantly on the public portal.
@@ -25,10 +30,10 @@ export default function AdminDashboard() {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {stats.map((stat) => (
           <Link key={stat.label} href={stat.href}>
-            <GlassCard className="p-8 hover:border-white/20 transition-all cursor-pointer">
+            <GlassCard className="p-8 hover:border-white/20 transition-all cursor-pointer border-white/10 bg-white/[0.03] shadow-[0_0_60px_rgba(255,255,255,0.05)]">
               <div className="flex items-center justify-between mb-6">
                 <div className="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center">
-                  <stat.icon className="w-5 h-5 text-white/60" />
+                  <stat.icon className="w-5 h-5 text-white/70" />
                 </div>
               </div>
               <p className="text-[10px] font-bold uppercase tracking-widest text-white/40 mb-2">
@@ -41,7 +46,7 @@ export default function AdminDashboard() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <GlassCard className="p-10 border-white/5">
+        <GlassCard className="p-10 border-white/10 bg-white/[0.03]">
           <h3 className="text-xl font-bold mb-6">Recent Activity</h3>
           <div className="space-y-6">
             {[
@@ -60,7 +65,7 @@ export default function AdminDashboard() {
           </div>
         </GlassCard>
 
-        <GlassCard className="p-10 border-white/5 bg-white/[0.01]">
+        <GlassCard className="p-10 border-white/10 bg-white/[0.03]">
           <h3 className="text-xl font-bold mb-6">System Status</h3>
           <div className="space-y-8">
             <div className="flex items-center justify-between">

@@ -20,6 +20,7 @@ interface Influencer {
 export function InfluencerNetwork() {
   const [influencers, setInfluencers] = useState<Influencer[]>([]);
   const [loading, setLoading] = useState(true);
+  const [failedAvatars, setFailedAvatars] = useState<Record<string, boolean>>({});
   const containerRef = useRef(null);
 
   useEffect(() => {
@@ -164,11 +165,16 @@ export function InfluencerNetwork() {
               <div className="relative z-10 space-y-12">
                 <div className="flex justify-between items-start">
                   <div className="flex items-center gap-6">
-                    {influencer.avatar_url ? (
+                    {influencer.avatar_url && !failedAvatars[influencer.id] ? (
                       <img 
                         src={influencer.avatar_url} 
                         alt={influencer.name} 
                         className="w-16 h-16 rounded-full border-2 border-white/5 grayscale group-hover:grayscale-0 transition-all duration-700"
+                        referrerPolicy="no-referrer"
+                        crossOrigin="anonymous"
+                        onError={() => {
+                          setFailedAvatars((prev) => ({ ...prev, [influencer.id]: true }));
+                        }}
                       />
                     ) : (
                       <div className="w-16 h-16 rounded-full bg-white/5 flex items-center justify-center text-xl font-black text-white/20 border-2 border-white/5">
@@ -202,7 +208,7 @@ export function InfluencerNetwork() {
                     <p className="text-3xl font-black text-white tracking-tighter">{influencer.subs}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Monthly Velocity</p>
+                    <p className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Total Videos</p>
                     <p className="text-sm font-medium text-white/70 leading-tight">{influencer.metric}</p>
                   </div>
                 </div>

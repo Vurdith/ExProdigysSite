@@ -9,6 +9,7 @@ interface MagneticButtonProps {
   className?: string;
   onClick?: () => void;
   variant?: "primary" | "secondary" | "ghost";
+  disabled?: boolean;
 }
 
 export function MagneticButton({
@@ -16,11 +17,13 @@ export function MagneticButton({
   className,
   onClick,
   variant = "primary",
+  disabled = false,
 }: MagneticButtonProps) {
   const ref = useRef<HTMLButtonElement>(null);
   const [position, setPosition] = useState({ x: 0, y: 0 });
 
   const handleMouse = (e: React.MouseEvent) => {
+    if (disabled) return;
     const { clientX, clientY } = e;
     const { height, width, left, top } = ref.current!.getBoundingClientRect();
     const middleX = clientX - (left + width / 2);
@@ -30,6 +33,7 @@ export function MagneticButton({
   };
 
   const reset = () => {
+    if (disabled) return;
     setPosition({ x: 0, y: 0 });
   };
 
@@ -45,13 +49,16 @@ export function MagneticButton({
       className={cn(
         "relative rounded-full px-8 py-3 text-sm font-medium tracking-wide transition-colors",
         variants[variant],
+        disabled && "pointer-events-none opacity-60",
         className
       )}
       animate={{ x: position.x, y: position.y }}
       transition={{ type: "spring", stiffness: 150, damping: 15, mass: 0.1 }}
       onMouseMove={handleMouse}
       onMouseLeave={reset}
-      onClick={onClick}
+      onClick={disabled ? undefined : onClick}
+      disabled={disabled}
+      aria-disabled={disabled}
     >
       {children}
     </motion.button>

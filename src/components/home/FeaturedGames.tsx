@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
 import { motion } from "framer-motion";
 import Image from "next/image";
 
@@ -21,14 +20,18 @@ export function FeaturedGames() {
   useEffect(() => {
     const fetchGames = async () => {
       try {
-        const { data, error } = await supabase
-          .from("portfolio_games")
-          .select("*")
-          .order("order_index", { ascending: true });
+        const response = await fetch("/api/portfolio");
+        const result = await response.json();
 
-        if (error) throw error;
-        if (data && data.length > 0) {
-          setGames(data);
+        if (!response.ok || result.error) {
+          throw new Error(result.error || "Failed to load portfolio.");
+        }
+
+        if (result.data && result.data.length > 0) {
+          const cleaned = result.data.filter(
+            (game: PortfolioGame) => game.title?.trim() && game.stats?.trim()
+          );
+          setGames(cleaned);
         } else {
           throw new Error("No data found");
         }
@@ -91,7 +94,7 @@ export function FeaturedGames() {
         >
           {allGames.map((game, i) => (
             <div key={`${game.id}-${i}`} className="relative flex-shrink-0">
-              <div className="group relative h-[55vh] w-[400px] md:w-[500px] rounded-none border border-white/5 bg-white/[0.02] overflow-hidden transition-all duration-700 hover:border-white/20">
+              <div className="group relative isolate h-[55vh] w-[400px] md:w-[500px] rounded-none border border-white/5 bg-white/[0.02] overflow-hidden transition-all duration-700 hover:border-white/20">
                 {/* Background Image */}
                 <div className="absolute inset-0 z-0">
                   <Image
@@ -100,21 +103,23 @@ export function FeaturedGames() {
                     fill
                     className="object-cover opacity-20 grayscale transition-all duration-700 group-hover:scale-105 group-hover:opacity-40 group-hover:grayscale-0"
                   />
-                  <div className="absolute inset-0 bg-gradient-to-t from-void via-transparent to-transparent" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-void/95 via-void/50 to-transparent" />
                 </div>
 
                 {/* Content */}
-                <div className="absolute inset-0 z-10 flex flex-col justify-end p-12">
-                  <span className="text-white/70 text-[10px] font-bold uppercase tracking-[0.3em] mb-4">
-                    {game.stats}
-                  </span>
-                  <h3 className="text-4xl font-bold tracking-tight mb-6">
-                    {game.title}
-                  </h3>
-                  <p className="text-white/90 text-sm leading-relaxed max-w-xs mb-8 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-4 group-hover:translate-y-0 whitespace-normal">
-                    {game.description}
-                  </p>
-                  <div className="w-12 h-[1px] bg-white/40 transition-all duration-500 group-hover:w-full" />
+                <div className="absolute inset-0 z-20 flex flex-col justify-end p-12">
+          <div className="bg-void/85 bg-gradient-to-br from-white/[0.06] via-transparent to-transparent border border-white/10 p-6 max-w-sm">
+                    <span className="text-white/80 text-[10px] font-bold uppercase tracking-[0.3em] mb-3 block">
+                      {game.stats || "Current: N/A"}
+                    </span>
+                    <h3 className="text-4xl font-bold tracking-tight mb-4 text-white line-clamp-2 max-h-[4.5rem] overflow-hidden">
+                      {game.title || "Untitled"}
+                    </h3>
+                    <p className="text-white/85 text-sm leading-relaxed mb-6 opacity-0 group-hover:opacity-100 transition-all duration-500 translate-y-4 group-hover:translate-y-0 whitespace-normal line-clamp-3 max-h-[4.5rem] overflow-hidden">
+                      {game.description}
+                    </p>
+                    <div className="w-12 h-[1px] bg-white/40 transition-all duration-500 group-hover:w-full" />
+                  </div>
                 </div>
 
                 {/* Index */}
