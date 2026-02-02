@@ -12,7 +12,8 @@ import {
   BarChart3, 
   Settings, 
   LogOut,
-  Globe
+  Globe,
+  BookOpen
 } from "lucide-react";
 
 export default function AdminLayout({
@@ -70,6 +71,7 @@ export default function AdminLayout({
     { label: "Influencers", href: "/admin/influencers", icon: Users },
     { label: "Portfolio", href: "/admin/portfolio", icon: Gamepad2 },
     { label: "Market Stats", href: "/admin/stats", icon: BarChart3 },
+    { label: "Blogs", href: "/admin/blogs", icon: BookOpen },
     { label: "Site Content", href: "/admin/content", icon: Settings },
   ];
 
